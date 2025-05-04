@@ -1,0 +1,208 @@
+<%- include("../../views/partials/admin/header") %>
+<style>
+  .pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+}
+
+.pagination li {
+  margin: 0 4px;
+}
+
+.pagination a {
+  text-decoration: none;
+  color: #007bff;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+.pagination .active a {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+  .error-message {
+    color: red;
+  }
+</style>
+<section class="content-main">
+  <div class="content-header">
+    <div>
+      <h2 class="content-title card-title">Brands</h2>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-3">
+          <form method="post" action="/admin/addBrand" enctype="multipart/form-data" onsubmit="return validateBrandForm()">
+            <div class="mb-4">
+              <label for="brandName" class="form-label">Brand Name</label>
+              <input
+                type="text"
+                name="name"
+                id="brandName"
+                placeholder="Type here"
+                class="form-control"
+              />
+            </div>
+            <label for="brandImage" class="form-label">Brand Image</label>
+            <div class="input-upload">
+              <img src="" alt=""/>
+              <input class="form-control border" name="image" type="file" id="brandImage" />
+            </div>
+          
+            <!-- Error from server -->
+            <% if (typeof errorMessage !== 'undefined') { %>
+              <p class="error-message"><%= errorMessage %></p>
+            <% } %>
+          
+            <!-- Error from client-side JS -->
+            <p class="error-message" id="formError"></p>
+          
+            <div class="d-grid">
+              <button class="btn btn-primary mt-20" type="submit">
+                Add Brand
+              </button>
+            </div>
+          </form>
+          
+          
+        </div>
+        <div class="col-md-7 ml-105">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Brand</th>
+                  <th>Logo</th>
+                  <th>Status</th>
+                  <th>Block/Unblock/Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%data.reverse().forEach((brand,index)=>{%>
+                <tr>
+                  <td class="text-start"><%=brand.brandName%></td>
+                  <td class="text-start">
+                    <div
+                      class="d-flex align-items-center justify-content-center"
+                      style="
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        overflow: hidden;
+                      "
+                    >
+                      <img
+                        src="/uploads/reImage/<%=brand.brandImage%>"
+                        alt="<%=brand.brandName%>"
+                        class="img-fluid rounded-circle"
+                        style="width: 100%; height: auto"
+                      />
+                    </div>
+                  </td>
+                  <td class="text-start">
+                    <%if(brand.isBlocked===true){%>
+                    <span
+                      class="badge rounded-pill alert-danger"
+                      style="width: 60px"
+                      >Blocked</span
+                    >
+                    <%}else{%>
+                    <span
+                      class="badge rounded-pill alert-success"
+                      style="width: 60px"
+                      >Active</span
+                    >
+                    <%}%>
+                  </td>
+                  <td class="text-start">
+                    <%if(brand.isBlocked===false){%>
+                    <button class="btn btn-danger" style="width: 90px">
+                      <a href="/admin/blockBrand?id=<%=brand._id%>" style='text-decoration:none'  class="text-white">Block</a>
+                    </button>
+                   <%}else{%>
+                    <button class="btn btn-success" style="width: 90px">
+                      <a href="/admin/unBlockBrand?id=<%=brand._id%>" style='text-decoration:none' class="text-white">Unblock</a>
+                    </button>
+                   <%}%>
+                    <button
+                      class="btn btn-danger"
+                      style="width: 90px"
+                      onclick="return confirmDelete()""
+                    >
+                      <a href="/admin/deleteBrand?id=<%=brand._id%>" style='text-decoration:none' class="text-white">Delete</a>
+                    </button>
+                  </td>
+                </tr>
+                <%})%>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pagination-container">
+</div>
+</section>
+
+<div class="d-flex justify-content-center mt-4">
+  <nav>
+    <ul class="pagination">
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= Number(currentPage) === i ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+</div>
+
+
+<script>
+  function confirmDelete() {
+    return confirm('Are you sure you want to delete this brand?');
+  }
+  
+  function validateBrandForm() {
+    const brandName = document.getElementById('brandName').value.trim();
+    const brandImage = document.getElementById('brandImage').value;
+    const errorMsg = document.getElementById('formError');
+  
+    errorMsg.textContent = '';
+  
+    if (brandName === '') {
+      errorMsg.textContent = 'Please enter a brand name.';
+      return false;
+    }
+  
+    
+    if (brandImage === '') {
+      errorMsg.textContent = 'Please choose a brand image.';
+      return false;
+    }
+  
+   
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.webp)$/i;
+    if (!allowedExtensions.exec(brandImage)) {
+      errorMsg.textContent = 'Please upload an image (jpg, jpeg, png, or webp).';
+      return false;
+    }
+  
+    return true;
+  }
+  </script>
+  
+
+<script>
+function confirmDelete(){
+  return confirm('Are you sure you want to delete this brand?')
+}
+</script>
+<%- include("../../views/partials/admin/footer") %>
+

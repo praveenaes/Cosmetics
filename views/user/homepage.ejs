@@ -1,0 +1,187 @@
+<%- include("../../views/partials/user/header") %>
+
+<!DOCTYPE html>
+<html>
+   <head>
+      <!-- Basic -->
+      <meta charset="utf-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <!-- Mobile Metas -->
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+      <!-- Site Metas -->
+      <meta name="keywords" content="" />
+      <meta name="description" content="" />
+      <meta name="author" content="" />
+      <link rel="shortcut icon" href="images/favicon.png" type="">
+      <title>Famms - Fashion HTML Template</title>
+      <!-- bootstrap core css -->
+      <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+      <!-- font awesome style -->
+      <link href="css/font-awesome.min.css" rel="stylesheet" />
+      <!-- Custom styles for this template -->
+      <link href="css/style.css" rel="stylesheet" />
+      <!-- responsive style -->
+      <link href="css/responsive.css" rel="stylesheet" />
+   </head>
+   <body>
+      
+        
+         <!-- slider section -->
+         <section class="slider_section ">
+            <div class="slider_bg_box">
+               <img src="images/slider-bg.jpg" alt="">
+            </div>
+            <div id="customCarousel1" class="carousel slide" data-ride="carousel">
+               <div class="carousel-inner">
+                  <div class="carousel-item active">
+                     <div class="container ">
+                        <div class="row">
+                           <div class="col-md-7 col-lg-6 ">
+                              <div class="detail-box">
+                                 <h1>
+                                    <span>
+                                    Your Beauty,
+                                    </span>
+                                    <br>
+                                    Our Passion
+                                 </h1>
+                                 <p>
+                                    Discover our curated collection of high-quality skincare, makeup, and wellness products designed to enhance your natural glow. Whether you're redefining your routine or finding your signature look, we’re here to bring beauty to your fingertips.
+
+                                 </p>
+                                 <div class="btn-box">
+                                    <a href="" class="btn1">
+                                    Shop Now
+                                    </a>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="carousel-item ">
+                     <div class="container ">
+                        <div class="row">
+                           <div class="col-md-7 col-lg-6 ">
+                              <div class="detail-box">
+                                 <h1>
+                                    <span>
+                                       Your Beauty,
+                                    </span>
+                                    <br>
+                                    Our Passion
+                                 </h1>
+                                 <p>
+                                    Discover our curated collection of high-quality skincare, makeup, and wellness products designed to enhance your natural glow. Whether you're redefining your routine or finding your signature look, we’re here to bring beauty to your fingertips.
+
+                                 </p>
+                                 <div class="btn-box">
+                                    <a href="" class="btn1">
+                                    Shop Now
+                                    </a>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="carousel-item">
+                     <div class="container ">
+                        <div class="row">
+                           <div class="col-md-7 col-lg-6 ">
+                              <div class="detail-box">
+                                 <h1>
+                                    <span>
+                                       Your Beauty,
+                                    </span>
+                                    <br>
+                                    Our Passion
+                                 </h1>
+                                 <p>
+                                    Discover our curated collection of high-quality skincare, makeup, and wellness products designed to enhance your natural glow. Whether you're redefining your routine or finding your signature look, we’re here to bring beauty to your fingertips.
+
+                                 </p>
+                                 <div class="btn-box">
+                                    <a href="" class="btn1">
+                                    Shop Now
+                                    </a>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="container">
+                  <ol class="carousel-indicators">
+                     <li data-target="#customCarousel1" data-slide-to="0" class="active"></li>
+                     <li data-target="#customCarousel1" data-slide-to="1"></li>
+                     <li data-target="#customCarousel1" data-slide-to="2"></li>
+                  </ol>
+               </div>
+            </div>
+         </section>
+         <!-- end slider section -->
+      </div>
+      <div class="gap" >
+
+      </div>
+      <section class="arrival_section" style="background-color: rgb(218, 208, 212); padding: 40px 0;">
+         <div class="container" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+           
+           <div class="box" style="flex: 1; padding: 20px;">
+             <img src="images/new.jpg" alt="" style="width: 100%; max-width: 500px; height: auto;">
+           </div>
+           
+           <div class="row" style="flex: 1; padding: 20px;">
+             <div class="col-md-6 ml-auto">
+               <div class="heading_container remove_line_bt">
+                 <h2>
+                   It's Your Style
+                 </h2>
+               </div>
+               <p style="margin-top: 20px; margin-bottom: 30px;">
+                 Discover our curated collection of high-quality skincare, makeup, and wellness products designed to enhance your natural glow. Whether you're redefining your routine or finding your signature look, we’re here to bring beauty to your fingertips.
+               </p>
+               <a href="">
+                 Shop Now
+               </a>
+             </div>
+           </div>
+           
+         </div>
+       </section>
+       
+      <!-- end arrival section -->
+      
+      <!-- product section -->
+      <section class="product_section layout_padding">
+         <div class="container">
+           <div class="heading_container heading_center">
+             <h2>
+               New <span>Arrivals</span>
+             </h2>
+           </div>
+           <div class="row">
+             <% for(let i = 0; i < products.length; i++) { %>
+               <div class="col-sm-6 col-md-4 col-lg-4">
+                 <div class="box" >
+                   <div class="img-box"  >
+                     <img src="/uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>"  >
+                   </div>
+                   <div class="detail-box">
+                     <h5><%= products[i].productName %></h5>
+                     <h6>$<%= products[i].salePrice %></h6>
+                   </div>
+                 </div>
+               </div>
+             <% } %>
+           </div>
+         </div>
+       </section>
+       
+      <!-- end product section -->
+
+      
+      
+<%- include("../../views/partials/user/footer") %>

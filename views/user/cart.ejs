@@ -1,0 +1,177 @@
+<%- include("../../views/partials/user/header") %>
+<style>
+  .shopbtn:hover {
+  animation: jerk 0.3s ease-in-out;
+  
+}
+
+@keyframes jerk {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+.smart-text p {
+  font-family: 'Lucida Handwriting', cursive;
+  font-size: 2.2rem;
+  color: #df1212; /* Dark blue-gray for a smart look */
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 1px;
+  margin: 20px;
+  transition: all 0.3s ease;
+  margin-top: -60px;
+}
+
+.smart-text p:hover {
+  color: #e91eaf; /* Refreshing teal */
+  transform: scale(1.1);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+</style>
+<section class="cart_area pt-100 pb-100">
+  <div class="smart-text" style="margin-top: 20px;" >
+    <p>Your Cart Awaits!</p>
+  </div>
+  
+  
+  <div class="container" style="margin-top: 66px;" >
+    <div class="cart__table table-responsive mb-40">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th class="cart__product">Product</th>
+            <th class="cart__price">Price</th>
+            <th class="cart__quantity">Quantity</th>
+            <th class="cart__action">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (cart && cart.items.length > 0) { %>
+            <% cart.items.forEach((item) => { %>
+              <tr>
+                <td class="cart__product d-flex align-items-center gap-3">
+                  <img src="/uploads/product-images/<%= item.image[0] %>" alt="Product Image" width="70" height="70" style="object-fit:cover;">
+                  <span><%= item.productName %></span>
+                </td>
+                <td class="cart__price">
+                  ₹<%= item.price*item.quantity %>
+                  <br>
+                  <span>₹<%= typeof item.price === 'number' ? item.price : '0.00' %>/per item </span>
+                </td>
+                
+                <td class="cart__quantity">
+                  <div class="d-flex justify-content-center align-items-center gap-2">
+                    <button class="btn btn-sm btn-secondary qtybtn dec" data-id="<%= item.productId %>">−</button>
+                    <input type="text" value="<%= item.quantity %>" data-max="<%= item.stock %>" readonly class="form-control text-center quantity-input" style="width: 50px;">
+                    <button class="btn btn-sm btn-secondary qtybtn inc" data-id="<%= item.productId %>">+</button>
+                  </div>
+                </td>
+                <td class="cart__action">
+                  <button class="btn btn-danger btn-sm remove-from-cart" data-id="<%= item.productId %>">
+                    <i class="fa fa-trash"></i> Remove
+                  </button>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="4" class="text-center">Your cart is empty.<br>
+                <a  href="/shop"><button class="shopbtn" style="background-color: rgb(252, 21, 125); border: none; color: white; border-radius: 5%; width: 160px;  height: 40px;"  >Start Shopping</button></a>  
+
+              </td>
+            </tr>
+
+          <% } %>
+          
+        </tbody>
+      </table>
+    </div>
+
+    <% if (cart && cart.items.length > 0) { %>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div style="background-color: #f8f9fa; padding: 15px 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center;">
+            <h5 style="margin-bottom: 10px; font-size: 16px; font-weight: bold;">Cart Totals</h5>
+            <ul style="list-style: none; padding: 0; margin-bottom: 10px; font-size: 14px;">
+              <li style="display: flex; justify-content: space-between; font-weight: bold;">
+                <span>Total</span>
+                <span>₹<%= cartTotal.toFixed(2) %></span>
+              </li>
+            </ul>
+            <a href="/checkout" class="btn btn-warning w-100" style="font-size: 14px; padding: 8px 0; border-radius: 5px;">Proceed to Checkout</a>
+          </div>
+        </div>
+      </div>
+    <% } %>
+    
+  </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  $(document).ready(function () {
+    $('.qtybtn').on('click', function () {
+      const $button = $(this);
+      const productId = $button.data('id');
+      const input = $button.siblings('input');
+      const oldValue = parseInt(input.val());
+      const maxQty = parseInt(input.data('max'));
+      let newVal = oldValue;
+
+      if ($button.hasClass('inc') && oldValue < maxQty && oldValue < 5) {
+        newVal++;
+      } else if ($button.hasClass('dec') && oldValue > 1) {
+        newVal--;
+      }
+
+      if (newVal !== oldValue) {
+        input.val(newVal);
+
+        $.ajax({
+          type: 'POST',
+          url: '/cart/update-quantity',
+          data: { productId: productId, quantity: newVal },
+          success: function (response) {
+            if (response.success) {
+              location.reload();
+            }
+          }
+        });
+      }
+    });
+
+    $('.remove-from-cart').on('click', function () {
+      const productId = $(this).data('id');
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "This item will be removed from your cart.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#FFB22C',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, remove it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            type: 'POST',
+            url: '/cart/remove',
+            data: { productId: productId },
+            success: function (response) {
+              if (response.success) {
+                location.reload();
+              }
+            }
+          });
+        }
+      });
+    });
+  });
+</script>
+
+<%- include("../../views/partials/user/footer") %>

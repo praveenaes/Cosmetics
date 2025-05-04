@@ -1,0 +1,134 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.signup-container {
+    display: flex;
+    width: 70%;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.signup-form {
+    flex: 1;
+    padding: 40px;
+}
+
+.signup-form h2 {
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+.google-signup {
+    width: 100%;
+    padding: 8px;
+    background-color: #d61066;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.google-signup i {
+    font-size: 16px;
+}
+.google-signup{
+    text-decoration: none;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.signup-button {
+    margin-top: 15px;
+    padding: 8px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.signup-image {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f8f8;
+    padding: 20px;
+}
+
+.signup-image img {
+    width: 100%;
+    height: auto;
+}
+
+.login-link {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #333;
+}
+
+.login-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+.error_message {
+    color: red;
+    font-size: 0.75rem;
+    margin-top: 5px; 
+}
+button.search-button {
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.3s ease;
+}
+.icons.logout-link {
+    text-decoration: none; /* Remove underline */
+    color: black; /* Set font color to black */
+    font-weight: bold; /* Optional: Make it bold */
+}
+
+.logout-link:hover {
+    color: gray; /* Optional: Change color on hover */
+}

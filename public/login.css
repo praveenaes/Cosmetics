@@ -1,0 +1,93 @@
+body,
+html {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.card {
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.login-section {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.login-form,
+.login-image {
+  flex: 1;
+  padding: 10px;
+}
+.login-form {
+  max-width: 50%;
+}
+.login-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 40%;
+}
+.login-image img {
+  max-width: 100%;
+  height: auto;
+}
+.social-btns {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+.social-btns button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+.form-group label {
+  font-size: 0.875rem; /* Decrease label size */
+}
+.form-control {
+  font-size: 0.875rem; /* Decrease input text size */
+  padding: 0.5rem; /* Decrease padding */
+}
+.btn-primary {
+  padding: 0.5rem 1rem; /* Decrease button padding */
+  font-size: 0.875rem; /* Decrease button text size */
+}
+.card-title {
+  font-size: 1.25rem; /* Decrease card title size */
+}
+.login-image .sign-up-link {
+  color: #333;
+  text-decoration: none;
+}
+.login-image .sign-up-link:hover {
+  color: #ff7f50;
+}
+.error-message {
+  color: red;
+  font-size: 0.75rem;
+  display: none;
+}
+.tag {
+  display: inline-block;
+  font-size: 14px;
+  color: #007bff; /* Blue color */
+  text-decoration: none; /* Remove underline */
+  margin-top: 10px;
+  transition: color 0.3s ease;
+}

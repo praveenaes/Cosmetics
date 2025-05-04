@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="signup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-form">
+            <h2>Log In</h2>
+            <% if(locals.message && message.length > 0) { %>
+                <span style="color: crimson; font-size: 18px; font-weight: bold; padding: 20px;"><%= message %></span>
+             <% } %>
+            <form id="signupForm" method="post" action="/login" onsubmit="return validateForm()">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter name">
+                <div id="error1" class="error_message"></div>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter email">
+                <div id="error2" class="error_message"></div>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter password">
+                <div id="error3" class="error_message"></div>
+
+                <button type="submit" class="signup-button" >Log In</button>
+            </form>
+            <a href="/auth/google" style="width: 390px; background-color: #007bff;" class="google-signup"><i class="fab fa-google"></i> Login with Google</a>
+            <a class="tag" href="/forgotPassword" 
+   style="color: #007bff; text-decoration: none; margin-left: 150px; font-size: 14px; margin-top: 10px; display: inline-block;">
+   Forgot Password
+</a>
+
+        </div>
+        <div class="signup-image">
+            <img src="login.jpg" alt="Signup Image">
+            <p class="login-link">Are you new user? <a href="/signup">Sign Up</a></p>
+        </div>
+    </div>
+
+    <script>
+        function validateForm() {
+            let isValid = true;
+
+            // Reset previous errors
+            document.getElementById("error1").innerText = "";
+            document.getElementById("error2").innerText = "";
+            document.getElementById("error3").innerText = "";
+
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            const alpha = /[a-zA-Z]/;
+            const digit = /\d/;
+
+           
+            if (name === "") {
+                document.getElementById("error1").innerText = "Name cannot be empty!";
+                isValid = false;
+            }
+
+           
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                document.getElementById("error2").innerText = "Enter a valid email!";
+                isValid = false;
+            }
+
+            
+            if (password.length < 8) {
+                document.getElementById("error3").innerText = "Password must be at least 8 characters long!";
+                isValid = false;
+            } else if (!alpha.test(password) || !digit.test(password)) {
+                document.getElementById("error3").innerText = "Password must contain both letters and numbers!";
+                isValid = false;
+            }
+
+            return isValid;
+        }
+    </script>
+</body>
+</html>

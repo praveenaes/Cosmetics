@@ -1,0 +1,416 @@
+<!-- sidebar -->
+<style>
+    /* Main Sidebar Container */
+#sidebar {
+    width: 280px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    background: linear-gradient(145deg, #55cbad, #3ab57e);
+    color: #fff;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+/* Mobile Toggle Button */
+.navbar-toggler {
+    background-color: #4361ee !important;
+    color: white !important;
+    border: none !important;
+    padding: 12px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.navbar-toggler:hover {
+    background-color: #3a86ff !important;
+}
+
+.navbar-toggler i {
+    color: white;
+    transition: transform 0.3s;
+}
+
+.navbar-toggler:hover i {
+    transform: rotate(90deg);
+}
+
+/* Profile Section */
+.sidebar-profileImage {
+    padding: 25px 0 15px;
+    position: relative;
+}
+
+.sidebar-profileImage:after {
+    content: '';
+    display: block;
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+    margin: 20px auto 0;
+}
+
+.profile-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s;
+}
+
+.profile-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* Username */
+.sidebar-username h5 {
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    margin-top: 10px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation List */
+.sidebar-nav {
+    margin-top: 15px;
+}
+
+/* Section Headers */
+.sidebar-header {
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    font-weight: bold;
+    padding: 8px 15px;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+    margin: 15px 0 10px;
+}
+
+/* Navigation Items */
+.sidebar-item {
+    transition: all 0.3s;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px !important;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    transition: all 0.3s;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar-link:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: #fff;
+    transform: scaleY(0);
+    transition: transform 0.3s;
+    border-radius: 0 3px 3px 0;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    transform: translateX(3px);
+}
+
+.sidebar-link:hover:before {
+    transform: scaleY(1);
+}
+
+/* Icons */
+.sidebar-link i {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.15);
+    padding: 18px;
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.sidebar-link:hover i {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(5deg);
+    color: #fff;
+}
+
+/* Footer/Logout */
+.sidebar-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-footer .sidebar-link {
+    background-color: rgba(255, 69, 58, 0.1);
+    border: 1px solid rgba(255, 69, 58, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    margin-top: 10px;
+    justify-content: center;
+    padding: 12px !important;
+    transition: all 0.3s;
+}
+
+.sidebar-footer .sidebar-link:hover {
+    background-color: rgba(255, 69, 58, 0.7);
+    border-color: rgba(255, 69, 58, 0.8);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px);
+}
+
+.sidebar-footer .sidebar-link i {
+    background: transparent;
+    padding: 0;
+    margin-right: 8px;
+}
+
+/* Active State for Links */
+.sidebar-item.active .sidebar-link {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-weight: 600;
+}
+
+.sidebar-item.active .sidebar-link:before {
+    transform: scaleY(1);
+}
+
+/* Animation for Menu Items */
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.sidebar-item {
+    animation: fadeInRight 0.4s forwards;
+    animation-delay: calc(var(--i, 0) * 0.1s);
+    opacity: 0;
+}
+
+.sidebar-item:nth-child(2) { --i: 1; }
+.sidebar-item:nth-child(3) { --i: 2; }
+.sidebar-item:nth-child(4) { --i: 3; }
+.sidebar-item:nth-child(6) { --i: 4; }
+.sidebar-item:nth-child(7) { --i: 5; }
+.sidebar-item:nth-child(8) { --i: 6; }
+
+/* Custom Scrollbar */
+#sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+#sidebar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+#sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+#sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Responsive Styles */
+@media (max-width: 767.98px) {
+    #sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    
+    .sidebar-profileImage {
+        padding: 20px 0 10px;
+    }
+    
+    .profile-img {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .sidebar-nav {
+        margin: 0 10px;
+    }
+    
+    #sidebarContent {
+        padding-bottom: 20px;
+    }
+    
+    #sidebarContent.collapsing {
+        transition: height 0.35s ease;
+    }
+}
+
+@media (min-width: 768px) {
+    #sidebarContent {
+        display: block !important;
+    }
+}
+</style>
+
+
+
+<aside id="sidebar" class="bg-light">
+    <!-- Toggle Button (Visible only on mobile) -->
+    <button class="navbar-toggler d-md-none w-100 py-2 border-0 bg-white rounded-0" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#sidebarContent"
+            aria-expanded="false" 
+            aria-label="Toggle sidebar">
+        <i class="fa fa-bars me-2"></i> Menu
+    </button>
+
+    <!-- Collapsible Content -->
+    <div class="collapse d-md-block" id="sidebarContent">
+        <!-- Profile Image -->
+        <div class="sidebar-profileImage text-center p-3">
+            <img src="uploads/reImage/<%= user.profileImage? user.profileImage : 'user.png' %>" alt="" class="profile-img">
+        </div>
+        
+        <!-- Username -->
+        <div class="sidebar-username text-center mb-3">
+            <h5 class="m-0">
+                <%=user.name%>
+            </h5>
+        </div>
+
+        <!-- Navigation -->
+        <ul class="sidebar-nav list-unstyled px-3">
+            
+
+            <!-- <li class="sidebar-item mb-1">
+                <a href="/profile" class="sidebar-link rounded p-2">
+                    <i class="fa-solid fa-house me-2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li> -->
+            <hr style="width: 75%; margin-left: 20px;">
+            <li class="sidebar-item mb-1">
+                <a style="margin-left: 30px;font-weight: bold;" href="/userProfile" class="sidebar-link rounded p-2">
+                    <span>My Profile</span>
+                </a>
+            </li>
+             
+            <li  class="sidebar-item mb-1">
+                <a style="margin-left: 30px;font-weight: bold;"  href="/userAddress" class="sidebar-link rounded p-2">
+                    <span>Address</span>
+                </a>
+            </li>
+            
+            
+
+            <li class="sidebar-item mb-1">
+                <a style="margin-left: 30px;font-weight: bold;"  href="/userOrder" class="sidebar-link rounded p-2">
+                    <span>Orders</span>
+                </a>
+            </li>
+            
+            <li class="sidebar-item mb-1">
+                <a  style="margin-left: 30px;font-weight: bold;"  href="/wishlist" class="sidebar-link rounded p-2">
+                    <span>Wishlist</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item mb-1">
+                <a  style="margin-left: 30px;font-weight: bold;"  href="/wishlist" class="sidebar-link rounded p-2">
+                    <span>Cart</span>
+                </a>
+            </li>
+            
+            <li class="sidebar-item mb-1">
+                <a style="margin-left: 30px;font-weight: bold;"  href="/wallet" class="sidebar-link rounded p-2">
+                    <span>Wallet</span>
+                </a>
+            </li>
+
+            
+        </ul>
+
+        <hr style="width: 75%; margin-left: 20px;">
+        <a style="margin-left: 50px;font-weight: bold;"  href="/logout" class="sidebar-link rounded p-2 d-block">
+                <span style="color: red;" >Logout</span>
+            </a>
+      
+    </div>
+</aside>
+
+<!-- <style>
+    /* Preserve original styling while making responsive */
+    #sidebar {
+        width: 280px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+    
+    .profile-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar-link {
+        color: #333;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .sidebar-link:hover {
+        background-color: rgba(0,0,0,0.05);
+    }
+    
+    .sidebar-item.active .sidebar-link {
+        background-color: rgba(0,0,0,0.1);
+        font-weight: 500;
+    }
+    
+    /* Mobile styles */
+    @media (max-width: 767.98px) {
+        #sidebar {
+            width: 100%;
+            height: auto;
+            position: relative;
+        }
+        
+        .navbar-toggler {
+            background-color: #f8f9fa !important;
+        }
+    }
+</style> -->

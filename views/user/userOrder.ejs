@@ -1,0 +1,137 @@
+<%- include("../../views/partials/user/header") %>
+
+<div class="d-flex" style="min-height: 100vh;">
+  <!-- Sidebar -->
+  <div>
+    <%- include("../../views/partials/user/sidebar") %>
+  </div>
+    <div id="orders-content" style="width: 1000px;" >
+        <div class="container-fluid mt-9"  background-color:#f7f7f7;">
+            <div class="row" >
+              <div class="col-md-12" style="max-width: calc(100% - 100px); margin-top: 60px;">
+  
+                    <h2 class="mb-4">Your Orders</h2>
+  
+                    <div class="container-fluid py-3">
+                        <div class="row justify-content-center">
+                          <div class="col-12 col-md-10 col-lg-8">
+                            <form action="/userOrder" method="get" class="d-flex">
+                              <input type="text" id="searchInput" name="query" placeholder="Search by orderId"
+                                     class="form-control me-2" style="margin-right: 0.5rem;" value="<%= query %>" />
+                              <button type="submit" class="btn btn-secondary me-2" style="margin-right: 0.5rem; height:50px ">Search</button>
+                              <a href="/userOrder?query=" id="clearButton" style="height:50px" class="btn btn-secondary d-flex align-items-center">Clear</a>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                      
+  
+                    <% if (orders && orders.length > 0) { %>
+                      <% orders.forEach(order => { %>
+                        <div style="border:1px solid #dee2e6; border-radius:5px; margin-bottom:20px; width: calc(100% + 100px);">
+                          <div style="background-color:#f0f0f0; padding:10px; border-top-left-radius:5px; border-top-right-radius:5px;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2">
+                                            <small class="text-muted">ORDER PLACED</small><br>
+                                            <% if (order.createdOn) { %>
+                                                <small><%= order.createdOn.toDateString() %></small>
+                                            <% } else { %>
+                                                <small>No date available</small>
+                                            <% } %>
+                                            
+                                          </div>
+                                        <div class="col-md-1">
+                                            <small class="text-muted">TOTAL</small><br>
+                                            <small><%= order.totalPrice %></small>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted">ORDER ID</small><br>
+                                            <small><%= order.orderId %></small>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <small class="text-muted">STATUS</small><br>
+                                            <span  style="font-size: 13px;" class="status-badge <%= 
+                                            order.status === 'delivered' ? 'bg-success' :
+                                            order.status === 'cancelled' ? 'bg-danger' :
+                                            order.status === 'shipped' ? 'bg-info' :
+                                            'bg-warning'
+                                        %>">
+                                                    <%= order.status.toUpperCase() %>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <small class="text-muted">PAYMENT METHOD</small><br>
+                                           <div>
+                                            <% if (order.paymentMethod === 'cod') { %>
+                                              Cash On Delivery
+                                          <% } else if (order.paymentMethod === 'online payment') { %>
+                                              Online Payment
+                                          <% } else if (order.paymentMethod === 'wallet') { %>
+                                              Wallet Payment
+                                          <% } %>
+                                           </div>
+                                        </div>
+                                        <div class="col-md-3 text-end d-flex">
+                                            <a href="/orderDetails?orderId=<%= order.orderId %>" class="btn btn-outline-primary btn-sm mt-2" style="height:50px;">View Details</a>
+                                            <% if (order.status==='delivered' && !order.returnReason &&
+                                                  order.requestStatus !=="rejected" ) { %>
+                                            <button onclick="initiateReturn('<%= order._id %>')" class="btn btn-warning btn-sm mt-2" style="margin-left:5px;">Request Return</button>
+                                            <% } else if (order.status==='return requested' &&
+                                                      order.requestStatus==='pending' ) { %>
+                                            <button onclick="cancelReturn('<%= order._id %>')" class="btn btn-danger btn-sm mt-2" style="margin-left:5px;">Cancel Return Request</button>
+                                            <% } else if (!['delivered', 'cancelled' , 'return requested'
+                                                          , 'returning' , 'returned' ].includes(order.status)) { %>
+                                            <button onclick="cancelOrder('<%= order._id %>')" class="btn btn-outline-danger btn-sm mt-2" style="margin-left:5px;">Cancel Order</button>
+                                           <%}%>
+                                          </div>
+                                    </div>
+                                </div>
+                        <%for(let i=0;i<order.orderedItems.length;i++){%>
+                                <div style="padding:20px;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2">
+                                            <img src="/uploads/product-images/<%=order.orderedItems[i].product.productImage[0]%>" alt="" style="width:80px; height:80px; object-fit:cover;">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <a style="text-decoration: none; color: black;" href="/product/<%= order.orderedItems[i].product._id %>"><%= order.orderedItems[i].product.productName %></a>
+                                            <p class="text-muted mb-0">Qty:<%= order.orderedItems[i].quantity%></p>
+                                            <p class="text-muted">Price: <%= order.orderedItems[i].product.salePrice %></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <%}%>
+                            </div>
+                        <% }) %> <!-- End of orders loop -->
+                    <% } else { %> <!-- If no orders -->
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="fas fa-shopping-bag fa-3x text-muted"></i>
+                            </div>
+                            <h3>No orders yet</h3>
+                            <p class="text-muted">When you place an order, it will appear here.</p>
+                            <a href="/shop" class="btn btn-primary mt-3">Start Shopping</a>
+                        </div>
+                    <% } %>
+  
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
+</div>
+<div class="d-flex justify-content-center mt-4">
+    <nav>
+      <ul class="pagination">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+            <a class="page-link" href="?page=<%= i %>&query=<%= query %>"><%= i %></a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+  </div>
+  
+  
+  
+  
