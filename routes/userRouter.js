@@ -91,9 +91,11 @@ router.post('/cart/update-quantity',userAuth,cartController.updateCartQuantity);
 router.get('/checkout',userAuth,checkoutController.getCheckout)
 router.post('/placeOrder',userAuth,orderController.placeOrder)
 router.post('/applyCoupon',userAuth,checkoutController.applyCoupon)
+router.delete('/removeCoupon',userAuth,checkoutController.removeCoupon)
 
 //order managemnet
 router.get('/userOrder',userAuth,orderController.userOrder)
+router.post('/placeWalletOrder',userAuth,orderController.placeWalletOrder)
 router.get('/orderDetails',userAuth,orderController.getOrderDetails)
 router.get('/getInvoice',userAuth,orderController.getInvoice)
 router.put('/cancelOrder',userAuth,orderController.cancelOrder)

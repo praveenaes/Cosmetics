@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tyrex Sales Report</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      padding: 20px 0;
+    }
+    #salesReport {
+      background-color: white;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      margin: 0 auto;
+      max-width: 1200px;
+    }
+    h2, h4 {
+      font-weight: bold;
+    }
+    table th, table td {
+      vertical-align: middle !important;
+    }
+    .button-container {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .download-btn {
+      background-color: #0d6efd;
+      color: white;
+      padding: 8px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .download-btn:hover {
+      background-color: #084298;
+      transform: translateY(-2px);
+    }
+    td, th {
+      word-break: break-word;
+      white-space: normal;
+      font-size: 14px;
+    }
+    td.order-id {
+      max-width: 150px;
+      word-break: break-all;
+      white-space: normal;
+      font-family: monospace;
+    }
+    table {
+      table-layout: fixed;
+      width: 100%;
+    }
+    .filter-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .filter-form {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 10px 15px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .filter-form select {
+      min-width: 120px;
+    }
+    #customDateBlock {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .date-inputs {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .summary-section {
+      margin: 30px 0;
+    }
+    .summary-section table {
+      border: 1px solid #dee2e6;
+    }
+    .summary-section th {
+      background-color: #f8f9fa;
+      width: 25%;
+    }
+    .orders-table th {
+      background-color: #f1f5f9;
+      position: sticky;
+      top: 0;
+    }
+    .orders-table {
+      margin-top: 25px;
+      overflow-x: auto;
+    }
+    .report-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eaeaea;
+    }
+    .report-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #eaeaea;
+      color: #6c757d;
+    }
+    .grand-total-row {
+      font-weight: bold;
+      background-color: #212529;
+      color: white;
+    }
+    .pagination-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid px-4">
+    <!-- Top Navigation and Filter Controls -->
+    <div class="filter-controls">
+      <div class="button-container">
+        <a href="#" class="btn btn-warning">Go Back</a>
+        <button class="btn btn-primary">
+          <i class="bi bi-file-pdf"></i> Download PDF
+        </button>
+        <button class="btn btn-primary">
+          <i class="bi bi-file-excel"></i> Download Excel
+        </button>
+      </div>
+      
+      <form class="filter-form" id="filterForm">
+        <label for="range" class="form-label mb-0 fw-semibold text-primary">
+          Sort By:
+        </label>
+        <select
+          name="range"
+          id="range"
+          class="form-select form-select-sm"
+        >
+          <option value="daily" selected>Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+          <option value="yearly">Yearly</option>
+          <option value="custom">Custom</option>
+        </select>
+        
+        <div id="customDateBlock" style="display: none;">
+          <div class="date-inputs">
+            <input type="date" name="from" id="fromDate" class="form-control form-control-sm">
+            <span>to</span>
+            <input type="date" name="to" id="toDate" class="form-control form-control-sm">
+            <button type="submit" class="btn btn-primary btn-sm" id="applyBtn">Apply</button>
+          </div>
+          <p id="dateError" class="text-danger mt-1 mb-0 fs-sm" style="display: none;">Please select both dates</p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Main Sales Report Container -->
+    <div id="salesReport">
+      <!-- Header -->
+      <div class="report-header">
+        <h2 class="mb-2">Tyrex</h2>
+        <h4 class="mb-3">Sales Report</h4>
+        <p class="mb-1"><strong>Report Range:</strong> January 1, 2025 – May 5, 2025</p>
+        <p><strong>Generated On:</strong> May 5, 2025</p>
+      </div>
+    
+      <!-- Summary Section -->
+      <div class="summary-section">
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <th class="bg-light">Total Sales</th>
+              <td>₹458,250</td>
+              <th class="bg-light">Total Orders</th>
+              <td>127</td>
+            </tr>
+            <tr>
+              <th class="bg-light">Products Sold</th>
+              <td>384</td>
+              <th class="bg-light">Discounts Given</th>
+              <td>₹18,450</td>
+            </tr>
+            <tr>
+              <th class="bg-light">Net Revenue</th>
+              <td>₹439,800</td>
+              <th class="bg-light">Avg. Order Value</th>
+              <td>₹3,608.66</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    
+      <!-- Orders Table -->
+      <div>
+        <h5 class="mb-3 fw-bold">Order Details</h5>
+        <div class="orders-table">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Discount</th>
+                <th>Total (₹)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="order-id">ORD24050001</td>
+                <td>Rahul Sharma</td>
+                <td>5/5/2025</td>
+                <td class="text-center">ONLINE</td>
+                <td class="text-center">DELIVERED</td>
+                <td class="text-end">500</td>
+                <td class="text-end">₹4,500</td>
+              </tr>
+              <tr>
+                <td class="order-id">ORD24050002</td>
+                <td>Priya Singh</td>
+                <td>5/4/2025</td>
+                <td class="text-center">COD</td>
+                <td class="text-center">PROCESSING</td>
+                <td class="text-end">0</td>
+                <td class="text-end">₹2,800</td>
+              </tr>
+              <tr>
+                <td class="order-id">ORD24050003</td>
+                <td>Aditya Patel</td>
+                <td>5/3/2025</td>
+                <td class="text-center">ONLINE</td>
+                <td class="text-center">SHIPPED</td>
+                <td class="text-end">750</td>
+                <td class="text-end">₹6,250</td>
+              </tr>
+              <tr>
+                <td class="order-id">ORD24050004</td>
+                <td>Meera Gupta</td>
+                <td>5/2/2025</td>
+                <td class="text-center">ONLINE</td>
+                <td class="text-center">DELIVERED</td>
+                <td class="text-end">0</td>
+                <td class="text-end">₹3,400</td>
+              </tr>
+              <tr>
+                <td class="order-id">ORD24050005</td>
+                <td>Vikram Joshi</td>
+                <td>5/1/2025</td>
+                <td class="text-center">COD</td>
+                <td class="text-center">DELIVERED</td>
+                <td class="text-end">200</td>
+                <td class="text-end">₹1,800</td>
+              </tr>
+              <tr class="grand-total-row">
+                <td colspan="5" class="text-end">Grand Total</td>
+                <td class="text-end">₹18,450</td>
+                <td class="text-end">₹458,250</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="pagination-container">
+        <nav>
+          <ul class="pagination">
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1">Previous</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#">Next</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    
+      <!-- Footer -->
+      <div class="report-footer">
+        <p class="mb-1">Generated by TyreX</p>
+        <p class="text-muted mb-0">© 2025 All Rights Reserved</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Script to toggle the custom date input fields
+    document.getElementById('range').addEventListener('change', function() {
+      const customBlock = document.getElementById('customDateBlock');
+      if (this.value === 'custom') {
+        customBlock.style.display = 'flex';
+      } else {
+        customBlock.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

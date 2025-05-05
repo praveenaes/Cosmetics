@@ -47,7 +47,7 @@ const getCheckout = async (req, res) => {
 
 const applyCoupon = async (req, res, next) => {
   try {
-    const userId = req.session.user._id;
+    const userId = req.session.user
     const { couponCode, subtotal } = req.body;
     console.log('Subtotal sent to server:', subtotal);
 
@@ -84,15 +84,18 @@ const applyCoupon = async (req, res, next) => {
       discount = coupon.offerPrice;
     }
 
-
-    await Cart.findOneAndUpdate(
+    const updatedCart = await Cart.findOneAndUpdate(
       { userId: userId },
       { $set: { discount: discount } },
-      { new: true }
+      { new: true, upsert: false } // ensure it doesn't create new if not found
     );
-
+    
+    if (!updatedCart) {
+      return res.status(400).json({ success: false, message: 'No cart found for user' });
+    }
     res.status(200).json({ success: true, message: "Coupon applied", coupon });
-    console.log('hello');
+    
+    
     
   } catch (error) {
   console.log('error in appying coupon',error)
@@ -104,9 +107,24 @@ const applyCoupon = async (req, res, next) => {
   }
 };
 
+const removeCoupon = async (req, res, next) => {
+  try {
+    const userId = req.session.user
+    await Cart.findOneAndUpdate(
+      { userId: userId },
+      { $set: { discount: 0 } },
+      { new: true }
+    );
+    res.status(200).json({ success: true, message: "Coupon applied" });
+  } catch (error) {
+   console.log();
+   
+  }
+};
 
 module.exports={
     getCheckout,
-    applyCoupon
+    applyCoupon,
+    removeCoupon
    
 }

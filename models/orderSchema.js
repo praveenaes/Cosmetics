@@ -87,6 +87,12 @@ const orderSchema = new Schema({
       type: Number,
       required: true
     },
+    rejectionCategory:{
+      type:String
+    },
+    rejectionReason:{
+      type:String
+    },
     invoiceDate: Date,
     status: {
       type: String,
@@ -116,6 +122,17 @@ const orderSchema = new Schema({
       required: true,
       enum: ['cod', 'wallet', 'online payment']
     },
+    paymentStatus: {
+      type: String,
+      enum: ['Pending', 'Success', 'Failed'],
+      default: 'Failed'
+    },
+    razorpayOrderId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+
     cancelReason:{
       Type:String,
     },
