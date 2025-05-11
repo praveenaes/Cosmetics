@@ -8,6 +8,7 @@ const wishlistController=require('../controllers/user/wishlistController')
 const cartController=require('../controllers/user/cartController')
 const checkoutController=require('../controllers/user/checkoutController')
 const orderController=require('../controllers/user/orderController')
+const walletController=require('../controllers/user/walletController')
 const {userAuth,adminAuth}=require('../middleware/auth')
 const multer = require('multer')
 const storage=require('../helpers/multer')
@@ -89,18 +90,31 @@ router.post('/cart/update-quantity',userAuth,cartController.updateCartQuantity);
 
 //checkout management
 router.get('/checkout',userAuth,checkoutController.getCheckout)
-router.post('/placeOrder',userAuth,orderController.placeOrder)
 router.post('/applyCoupon',userAuth,checkoutController.applyCoupon)
 router.delete('/removeCoupon',userAuth,checkoutController.removeCoupon)
 
 //order managemnet
 router.get('/userOrder',userAuth,orderController.userOrder)
+router.post('/placeOrder',userAuth,orderController.placeOrder)
 router.post('/placeWalletOrder',userAuth,orderController.placeWalletOrder)
 router.get('/orderDetails',userAuth,orderController.getOrderDetails)
 router.get('/getInvoice',userAuth,orderController.getInvoice)
 router.put('/cancelOrder',userAuth,orderController.cancelOrder)
 router.post('/return', userAuth, uploads.array('images', 3), orderController.requestReturn);
 router.put('/cancelReturnRequest',userAuth,orderController.cancelReturnRequest)
+router.get('/confirmation',userAuth,orderController.loadConfirmation);
+
+//razorpay management
+router.post("/order/createOrder",userAuth,orderController.createOrder)
+router.post("/order/verifyPayment",userAuth,orderController.verifyPayment);
+
+
+
+//wallet management
+router.get('/wallet',userAuth,walletController.getWallet)
+router.post("/wallet/createOrder",userAuth, walletController.createOrder);
+router.post("/wallet/verifyPayment",userAuth, walletController.verifyPayment);
+router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney);
 
 
 module.exports=router

@@ -56,7 +56,7 @@ const addCoupon = async (req, res, next) => {
       offerPrice,
       minimumPrice
     } = req.body;
-    console.log('error in coupon',req.body);
+ 
     const parsedOfferPrice = offerPrice ? parseFloat(offerPrice) : null;
     const parsedMinimumPrice = parseFloat(minimumPrice);
 

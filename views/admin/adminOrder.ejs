@@ -175,26 +175,36 @@
         </div>
     </div>
 </div>
-<div class="pagination">
-    <% if (currentPage > 1) { %>
-      <a href="/admin/orderPage?page=<%= currentPage - 1 %>&search=<%= searchQuery %>">
-        <i class="fa-solid fa-backward"></i>
-      </a>
-    <% } %>
-  
-    <% for (let i = 1; i <= totalPages; i++) { %>
-      <a href="/admin/orderPage?page=<%= i %>&search=<%= searchQuery %>" class="<%= currentPage === i ? 'active' : '' %>">
-        <%= i %>
-      </a>
-    <% } %>
-  
-    <% if (currentPage < totalPages) { %>
-      <a href="/admin/orderPage?page=<%= currentPage + 1 %>&search=<%= searchQuery %>">
-        <i class="fa-solid fa-forward"></i>
-      </a>
-    <% } %>
-  </div>
-  
+<div class="pagination-container d-flex justify-content-center mt-4 mb-4">
+  <nav aria-label="Page navigation">
+    <ul class="pagination pagination-sm flex-wrap">
+      <% if (currentPage > 1) { %>
+      <li class="page-item">
+        <a href="?page=<%= currentPage - 1 %>" class="page-link">&laquo; <span class="d-none d-sm-inline">Previous</span></a>
+      </li>
+      <% } %>
+      
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <% if (i === currentPage) { %>
+        <li class="page-item active">
+          <span class="page-link"><%= i %></span>
+        </li>
+        <% } else { %>
+        <li class="page-item">
+          <a href="?page=<%= i %>" class="page-link"><%= i %></a>
+        </li>
+        <% } %>
+      <% } %>
+      
+      <% if (currentPage < totalPages) { %>
+      <li class="page-item">
+        <a href="?page=<%= currentPage + 1 %>" class="page-link"><span class="d-none d-sm-inline">Next</span> &raquo;</a>
+      </li>
+      <% } %>
+    </ul>
+  </nav>
+</div>
+
 
 </section>
 

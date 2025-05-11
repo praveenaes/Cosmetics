@@ -40,6 +40,12 @@ const userSchema = new Schema({
         type:Boolean,
         default:false
     },
+    wishlist:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:"Product",
+        }
+    ],
     cart:[{
         type:Schema.Types.ObjectId,
         ref:'Cart'
@@ -56,9 +62,48 @@ const userSchema = new Schema({
         type:Date,
         default:Date.now
     },
-    referalCode:{
-        type:String
+    referralCode:{
+        type:String,
+        unique: true,
+        sparse:true  
     },
+    referredBy: {
+        type: String,
+        default: null
+      },
+    addresses:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:"Adress",
+        },
+    ],
+    orders:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:"Order",
+        }
+    ],
+    payments:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:"Payment",
+        }
+    ],
+    coupons:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:"Coupon",
+        }
+    ],
+    reviews:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:"Review",
+        }
+      ],
+      referalCode:{
+        type:String
+      },
     redeemed:{
         type:Boolean
     },
@@ -79,7 +124,7 @@ const userSchema = new Schema({
             default: Date.now
         }
     }]
-})
+},{timestamps: true})
 
 const User = mongoose.model('User',userSchema)
 module.exports=User

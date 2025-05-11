@@ -43,6 +43,7 @@ body {
     justify-content: center;
     gap: 10px;
     margin-top: 10px;
+    width: 200px;
 }
 
 .google-signup i {
@@ -50,11 +51,13 @@ body {
 }
 .google-signup{
     text-decoration: none;
+    margin-left: 90px;
+   
 }
 
 form {
     display: flex;
-    flex-direction: column;
+    flex-direction:column
 }
 
 label {
@@ -64,6 +67,7 @@ label {
 }
 
 input {
+   
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -79,6 +83,8 @@ input {
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
+    width: 265px;
+    margin-left: 90px;
 }
 
 .signup-image {

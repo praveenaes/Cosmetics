@@ -3,46 +3,56 @@ const User=require('../../models/userSchema')
 const Order=require('../../models/orderSchema')
 const Wallet=require('../../models/walletSchema')
 
-
 const getOrder = async (req, res) => {
-    try {
-      const userId = req.session.user;
-  
-      const searchQuery = req.query.search || '';
-      const currentPage = parseInt(req.query.page) || 1;
-      const itemsPerPage = 4
+  try {
+    const userId = req.session.user;
 
-      
-  
-      const query = {};
-      if (searchQuery.trim()) {
-        query.orderId = { $regex: new RegExp(searchQuery.trim(), 'i') };
-      }
-  
-      const totalOrders = await Order.countDocuments(query);
-  
-      const orders = await Order.find(query)
-        .populate('userId') 
-        .sort({ createdOn: -1 })
-        .skip((currentPage - 1) * itemsPerPage)
-        .limit(itemsPerPage)
-        .lean();
-  
-      const totalPages = Math.ceil(totalOrders / itemsPerPage);
-  
-      res.render('adminOrder', {
-        orders,
-        currentPage,
-        totalPages,
-        searchQuery,
-      });
-  
-    } catch (error) {
-      console.log('Error rendering order page:', error);
-      res.status(500).send('Internal Server Error');
+    // Get search query and pagination info from the request
+    const searchQuery = req.query.search || '';
+    const currentPage = parseInt(req.query.page) || 1;
+    const itemsPerPage = 4; // Number of orders to show per page
+
+    // Build the search query
+    const query = {};
+    if (searchQuery.trim()) {
+      query.orderId = { $regex: new RegExp(searchQuery.trim(), 'i') }; // Search by orderId
     }
-  };
-  
+
+    // Get the total number of orders based on the query
+    const totalOrders = await Order.countDocuments(query);
+
+    // Retrieve the orders for the current page, applying pagination
+    const orders = await Order.find(query)
+      .populate('userId')
+      .sort({ createdOn: -1 })
+      .skip((currentPage - 1) * itemsPerPage)
+      .limit(itemsPerPage)
+      .lean();
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(totalOrders / itemsPerPage);
+
+    // Build the query string without the page parameter to preserve other query params
+    const queryWithoutPage = Object.entries(req.query)
+      .filter(([key]) => key !== 'page') // Remove the `page` query parameter
+      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+      .join('&');
+
+    // Render the order page with pagination data
+    res.render('adminOrder', {
+      orders,
+      currentPage,
+      totalPages,
+      searchQuery,
+      queryWithoutPage, // Pass to EJS for pagination links
+    });
+
+  } catch (error) {
+    console.log('Error rendering order page:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 
 const orderDetails=async(req,res)=>{
     try {

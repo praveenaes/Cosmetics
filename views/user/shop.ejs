@@ -56,7 +56,7 @@
   .sidebar {
     padding: 20px;
     border: 1px solid #ddd;
-    background-color: #f9f9f9;
+    background-color: white;
     border-radius: 8px;
     margin-bottom: 20px;
     width: 250px;
@@ -80,7 +80,7 @@
   }
   .filter-item a:hover {
     font-weight: bold;
-    color: #230e99;
+    
   }
 
   .product-list-container {
@@ -162,7 +162,7 @@
 
   .price-filter {
     padding: 10px;
-    background-color: #f9f9f9;
+    background-color: white;
     border-radius: 8px;
     margin-top: 20px;
   }
@@ -186,8 +186,8 @@
   }
 
   .price-button:hover {
-    background-color: #007bff;
-    color: white;
+    background-color: #d8d8e3;
+    color: black;
     transform: scale(1.05);
   }
 
@@ -276,6 +276,15 @@ input:-webkit-autofill {
 .clear-btn:hover {
   background-color: #d45a3c;
 }
+.filter-item.active a {
+  font-weight: bold;
+  color: #04000a; /* Or any highlight color you like */
+}
+.price-button.active {
+  background-color: #d7dbde;
+  color: rgb(7, 0, 0);
+  
+}
 
 
 </style>
@@ -309,42 +318,49 @@ input:-webkit-autofill {
     <div class="product-list-container">
       <aside class="sidebar" style="border-color: #888686;" >
         <div class="filter-section">
-          <div style="font-family:Georgia, 'Times New Roman', Times, serif" class="filter-title">CATEGORIES</div>
-          <div class="category-brand-container">
-            <ul>
-              <% for (let i = 0; i < category.length; i++) { %>
-                <li class="filter-item">
-                  <a href="/shop?category=<%= category[i]._id %>&sort=<%= query.sort %>&query=<%= query.query %>&gt=<%= query.gt %>&lt=<%= query.lt %>"   ><%= category[i].name %></a>
-                </li>
-              <% } %>
-            </ul>
-          </div>
-        </div>
+  <div style="font-family:Georgia, 'Times New Roman', Times, serif" class="filter-title">CATEGORIES</div>
+  <div class="category-brand-container">
+    <ul>
+      <% for (let i = 0; i < category.length; i++) { 
+           let isActive = query.category === String(category[i]._id);
+      %>
+        <li class="filter-item <%= isActive ? 'active' : '' %>">
+          <a href="/shop?category=<%= category[i]._id %>&sort=<%= query.sort %>&query=<%= query.query %>&gt=<%= query.gt %>&lt=<%= query.lt %>">
+            <%= category[i].name %>
+          </a>
+        </li>
+      <% } %>
+    </ul>
+  </div>
+</div>
 
-        <div class="filter-section">
-          <div style="font-family:Georgia, 'Times New Roman', Times, serif" class="filter-title">BRANDS</div>
-          <div class="category-brand-container">
-            <ul>
-              <% for (let i = 0; i < brand.length; i++) { %>
-                <li class="filter-item">
-                  <a href="/shop?brand=<%= brand[i]._id %>&sort=<%= query.sort %>&category=<%= query.category %>&query=<%= query.query %>&gt=<%= query.gt %>&lt=<%= query.lt %>"><%= brand[i].brandName %></a>
-                </li>
-              <% } %>
-            </ul>
-          </div>
-        </div>
 
+        
         <div class="price-filter">
-          <div style="font-family:Georgia, 'Times New Roman', Times, serif" class="filter-title">FILTER BY PRICE</div>
-          <form id="price-filter-form">
-            <div class="price-options">
-              <a href="/shop?gt=0&lt=500&sort=<%= query.sort %>&query=<%= query.query %>&category=<%= query.category %>&brand=<%= query.brand %>"><button type="button" class="price-button">Under ₹500</button></a>
-              <a href="/shop?gt=500&lt=1000&sort=<%= query.sort %>&query=<%= query.query %>&category=<%= query.category %>&brand=<%= query.brand %>"><button type="button" class="price-button">₹500 - ₹1000</button></a>
-              <a href="/shop?gt=1000&lt=1500&sort=<%= query.sort %>&query=<%= query.query %>&category=<%= query.category %>&brand=<%= query.brand %>"><button type="button" class="price-button">₹1000 - ₹1500</button></a>
-              <a href="/shop?gt=1500&lt=1000000&sort=<%= query.sort %>&query=<%= query.query %>&category=<%= query.category %>&brand=<%= query.brand %>"><button type="button" class="price-button">Above ₹1500</button></a>
-            </div>
-          </form>
-        </div>
+  <div style="font-family:Georgia, 'Times New Roman', Times, serif" class="filter-title">FILTER BY PRICE</div>
+  <form id="price-filter-form">
+    <div class="price-options">
+      <% const gt = Number(query.gt); const lt = Number(query.lt); %>
+
+      <a href="/shop?gt=0&lt=500&sort=<%= query.sort %>&query=<%= query.query %>&category=<%= query.category %>&brand=<%= query.brand %>">
+        <button type="button" class="price-button <%= gt === 0 && lt === 500 ? 'active' : '' %>">Under ₹500</button>
+      </a>
+
+      <a href="/shop?gt=500&lt=1000&sort=<%= query.sort %>&query=<%= query.query %>&category=<%= query.category %>&brand=<%= query.brand %>">
+        <button type="button" class="price-button <%= gt === 500 && lt === 1000 ? 'active' : '' %>">₹500 - ₹1000</button>
+      </a>
+
+      <a href="/shop?gt=1000&lt=1500&sort=<%= query.sort %>&query=<%= query.query %>&category=<%= query.category %>&brand=<%= query.brand %>">
+        <button type="button" class="price-button <%= gt === 1000 && lt === 1500 ? 'active' : '' %>">₹1000 - ₹1500</button>
+      </a>
+
+      <a href="/shop?gt=1500&lt=1000000&sort=<%= query.sort %>&query=<%= query.query %>&category=<%= query.category %>&brand=<%= query.brand %>">
+        <button type="button" class="price-button <%= gt === 1500 && lt === 1000000 ? 'active' : '' %>">Above ₹1500</button>
+      </a>
+    </div>
+  </form>
+</div>
+
       </aside>
 
       <main class="product-grid">

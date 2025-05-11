@@ -295,13 +295,13 @@
 
     <!-- Collapsible Content -->
     <div class="collapse d-md-block" id="sidebarContent">
-        <!-- Profile Image -->
+        
         <div class="sidebar-profileImage text-center p-3">
             <img src="uploads/reImage/<%= user.profileImage? user.profileImage : 'user.png' %>" alt="" class="profile-img">
         </div>
         
         <!-- Username -->
-        <div class="sidebar-username text-center mb-3">
+        <div class="sidebar-username text-center mb-3" >
             <h5 class="m-0">
                 <%=user.name%>
             </h5>
@@ -311,12 +311,7 @@
         <ul class="sidebar-nav list-unstyled px-3">
             
 
-            <!-- <li class="sidebar-item mb-1">
-                <a href="/profile" class="sidebar-link rounded p-2">
-                    <i class="fa-solid fa-house me-2"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li> -->
+            
             <hr style="width: 75%; margin-left: 20px;">
             <li class="sidebar-item mb-1">
                 <a style="margin-left: 30px;font-weight: bold;" href="/userProfile" class="sidebar-link rounded p-2">

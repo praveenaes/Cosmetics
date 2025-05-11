@@ -105,7 +105,8 @@ const orderSchema = new Schema({
     'cancelled',
     'return requested',
     'returning',
-    'returned']
+    'returned'],
+     default: 'pending'
     },
     requestStatus:{
       type:String,

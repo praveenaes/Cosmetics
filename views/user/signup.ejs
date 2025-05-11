@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <div class="signup-container">
-        <div class="signup-form">
+    <div class="signup-container" >
+        <div class="signup-form"    >
             <h2>Sign Up</h2>
             <% if(locals.message && message.length > 0) { %>
                 <span style="color: crimson; font-size: 18px; font-weight: bold; padding: 20px;"><%= message %></span>
@@ -40,9 +40,13 @@
 
                 <div id="error5" class="error_message"></div>
 
+                   <!-- referral -->
+                <label for="confirm-password">Referral Code</label>
+                <input type="text" id="referral" name="referral" placeholder="optional">
+
                 <button type="submit" class="signup-button">Sign Up</button>
             </form>
-            <a href="/auth/google" style="width: 390px; background-color: blue;" class="google-signup"><i class="fab fa-google"></i> Sign Up with Google</a>
+            <a href="/auth/google" style="width: 250px; background-color: blue;" class="google-signup"><i class="fab fa-google"></i> Sign Up with Google</a>
         </div>
         <div class="signup-image">
             <img src="sin.jpg" alt="Signup Image">
