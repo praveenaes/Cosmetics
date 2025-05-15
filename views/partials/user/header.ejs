@@ -167,14 +167,20 @@
     margin: 5px 0;
 }
 
-
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1050; /* Ensure it's above the sidebar */
+}
 
 </style>
     
 
 </head>
 <body>
-    <div class="header">
+    <div class="header" style="height: 80px; position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background-color: white;">
         <div class="brand">Women Fashion</div>
         <div class="nav-links">
             <a href="/" class="nav-item">Home</a>
@@ -182,7 +188,7 @@
         </div>
         <div class="icons">
             <%if(user){%>
-            <a href="/logout" class="logout-link btn btn-danger" >Logout</a>
+            <a href="/logout" class="logout-link btn btn-danger" style="margin-top: 10px;" >Logout</a>
             
             <a href="/wishlist"><i class="fas fa-heart"></i></a>
            <a href="/cart"><i class="fas fa-shopping-cart"></i></a>

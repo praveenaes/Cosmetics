@@ -120,6 +120,7 @@
                             <div>
                                 <span class="status-badge d-inline-block px-2 py-1 rounded <%= 
                                     order.status === 'delivered' ? 'bg-success text-white' :
+                                    order.status === 'pending' ? 'bg-secondary text-white' : 
                                     order.status === 'cancelled' ? 'bg-danger text-white' :
                                     order.status === 'shipped' ? 'bg-info text-white' :
                                     order.status === 'return_requested' ? 'bg-warning text-dark' :

@@ -51,7 +51,7 @@ body {
 }
 .google-signup{
     text-decoration: none;
-    margin-left: 90px;
+    margin-left: 60px;
    
 }
 
@@ -84,7 +84,7 @@ input {
     cursor: pointer;
     font-size: 14px;
     width: 265px;
-    margin-left: 90px;
+    margin-left: 60px;
 }
 
 .signup-image {

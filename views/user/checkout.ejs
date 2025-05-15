@@ -81,7 +81,7 @@
 </style>
 
 <body class="bg-light">
-  <div class="container py-5">
+  <div class="container py-5" style="margin-top: 70px;" >
     <div class="row">
       <!-- Billing Address -->
       <!-- Billing Address -->
@@ -89,7 +89,7 @@
         <div class="bg-white p-4 rounded shadow-sm">
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="h4 mb-0">Shipping Address</h2>
-            <a href="/userProfile" class="btn btn-primary"
+            <a href="/userAddress" class="btn btn-primary"
               >Add New Address</a
             >
           </div>
@@ -109,7 +109,7 @@
               name="selectedAddress"
               id="address_<%= address._id %>"
               value="<%= address._id %>"
-              <%= index === 0 ? 'checked' : '' %> <!-- Select the first address by default -->
+              <%= index === 0 ? 'checked' : '' %>> <!-- Select the first address by default -->
            
             <label class="form-check-label" for="address_<%= address._id %>">
 <span class="badge yellow-button mb-2"><%= address.addressType %></span>
@@ -128,10 +128,10 @@
     <% }); %>
   </div>
   <% } else { %>
-  <div class="text-center py-4">
+  <!-- <div class="text-center py-4">
     <p class="mb-3">No addresses available</p>
     <a href="/checkoutAddress" class="btn btn-primary">Add Your First Address</a>
-  </div>
+  </div> -->
   <% } %>
 </div>
 
@@ -585,7 +585,7 @@ function updateOrderSummary() {
 
     function proceedWithOrder() {
       const couponCode = document.getElementById('couponCode').value;
-       const selectedAddress = document.getElementById('existingAddress');
+       const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
        const paymentMethod = document.querySelector('input[name="payment"]:checked');
 
        const orderData = {
@@ -650,6 +650,7 @@ function updateOrderSummary() {
 
 
     function processWalletOrder(orderData) {
+
        const walletBalance = parseFloat(document.getElementById('walletBalance').textContent);
        const payableAmount = parseFloat(document.getElementById('grandTotal').textContent);
 
@@ -658,6 +659,8 @@ function updateOrderSummary() {
        const walletPaymentModal = new bootstrap.Modal(document.getElementById('walletPaymentModal'));
        const insufficientFunds = document.getElementById('insufficientFunds');
        const confirmWalletPayment = document.getElementById('confirmWalletPayment');
+
+    
 
        if (walletBalance < payableAmount) {
            insufficientFunds.style.display = 'block';
@@ -794,7 +797,7 @@ function updateOrderSummary() {
 }
 
     document.getElementById('confirmWalletPayment').addEventListener('click', async () => {
-       const selectedAddress = document.getElementById('existingAddress');
+       const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
        if (!selectedAddress || selectedAddress.value === 'Select an address') {
            alert('Please select a shipping address');
            return;

@@ -8,7 +8,7 @@
     <div id="orders-content" style="width: 1000px;" >
         <div class="container-fluid mt-9"  background-color:#f7f7f7;">
             <div class="row" >
-              <div class="col-md-12" style="max-width: calc(100% - 100px); margin-top: 60px;">
+              <div class="col-md-12" style="max-width: calc(100% - 150px); margin-top: 100px;margin-left: 290px;">
   
                     <h2 class="mb-4">Your Orders</h2>
   
@@ -52,6 +52,7 @@
                                             <small class="text-muted">STATUS</small><br>
                                             <span  style="font-size: 11px;" class="status-badge <%= 
                                             order.status === 'delivered' ? 'bg-success' :
+                                            order.status === 'pending' ? 'bg-secondary text-white' : 
                                             order.status === 'cancelled' ? 'bg-danger' :
                                             order.status === 'shipped' ? 'bg-info' :
                                             'bg-warning'
@@ -95,6 +96,12 @@
                                             <a style="text-decoration: none; color: black;" href="/product/<%= order.orderedItems[i].product._id %>"><%= order.orderedItems[i].product.productName %></a>
                                             <p class="text-muted mb-0">Qty:<%= order.orderedItems[i].quantity%></p>
                                             <p class="text-muted">Price: <%= order.orderedItems[i].product.salePrice %></p>
+                                         <%if( ['Processing','Pending'].includes(order.status) && order.orderedItems.length > 1 &&  order.orderedItems[i].productStatus === 'active' && order.paymentStatus != 'Failed'){%>
+                                         <button class="btn btn-outline-danger btn-sm fw-semibold text-uppercase" onclick="cancelProduct('<%=order._id %>','<%= i%>')">cancel Product</button>
+                                         <%}%>
+                                         <%if(order.orderedItems[i].productStatus === 'cancelled'){%>
+                                         <span class="badge bg-danger text-white">PRODUCT CANCELLED</span>
+                                         <%}%>
                                         </div>
                                     </div>
                                 </div>

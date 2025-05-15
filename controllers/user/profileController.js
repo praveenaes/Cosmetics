@@ -547,7 +547,7 @@ res.redirect('/userProfile')
 
 const uploadProfile = async (req, res) => {
     try {
-      const userId = req.session.user._id; // Assuming you're using session
+      const userId = req.session.user // Assuming you're using session
       const image = req.file.filename;
   
       if (!image) {

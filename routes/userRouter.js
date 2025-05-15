@@ -9,12 +9,11 @@ const cartController=require('../controllers/user/cartController')
 const checkoutController=require('../controllers/user/checkoutController')
 const orderController=require('../controllers/user/orderController')
 const walletController=require('../controllers/user/walletController')
+const retryPaymentController=require('../controllers/user/retryPaymentController')
 const {userAuth,adminAuth}=require('../middleware/auth')
 const multer = require('multer')
 const storage=require('../helpers/multer')
 const uploads=multer({storage:storage})
-
-
 
 
 //signup management
@@ -108,13 +107,14 @@ router.get('/confirmation',userAuth,orderController.loadConfirmation);
 router.post("/order/createOrder",userAuth,orderController.createOrder)
 router.post("/order/verifyPayment",userAuth,orderController.verifyPayment);
 
-
-
 //wallet management
 router.get('/wallet',userAuth,walletController.getWallet)
 router.post("/wallet/createOrder",userAuth, walletController.createOrder);
 router.post("/wallet/verifyPayment",userAuth, walletController.verifyPayment);
 router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney);
 
+//retry payment management
+router.get("/paymentFailure",userAuth,retryPaymentController.getPaymentFailure)
+router.get('/retryPayment',userAuth,retryPaymentController.getRetryPayment)
 
 module.exports=router

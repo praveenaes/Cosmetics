@@ -16,11 +16,11 @@
              <% } %>
             <form id="signupForm" method="post" action="/login" onsubmit="return validateForm()">
                 <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter name">
+                <input type="text" id="name" name="name" placeholder="Enter name" value="<%= typeof formData !== 'undefined' ? formData.name : '' %>" >
                 <div id="error1" class="error_message"></div>
 
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter email">
+                <input type="email" id="email" name="email" placeholder="Enter email" value="<%= typeof formData !== 'undefined' ? formData.email : '' %>" >
                 <div id="error2" class="error_message"></div>
 
                 <label for="password">Password</label>

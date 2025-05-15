@@ -47,7 +47,7 @@ const getCoupon=async(req,res)=>{
       }
 }
 
-const addCoupon = async (req, res, next) => {
+const addCoupon = async (req, res) => {
   try {
     const {
       couponName,
@@ -138,7 +138,7 @@ const addCoupon = async (req, res, next) => {
   }
 };
 
-const editCoupon = async (req, res, next) => {
+const editCoupon = async (req, res) => {
   try {
     const couponId = req.query.id;
 
@@ -190,7 +190,7 @@ const editCoupon = async (req, res, next) => {
   }
 };
 
-const deleteCoupon = async (req, res,next) => {
+const deleteCoupon = async (req, res) => {
   try {
     const couponId = req.query.id;
 

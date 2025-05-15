@@ -101,10 +101,7 @@ const applyCoupon = async (req, res, next) => {
   try {
     const userId = req.session.user
     const { couponCode, subtotal } = req.body;
-    console.log('Subtotal sent to server:', subtotal);
-
-
-
+   
     const coupon = await Coupon.findOne({ name: couponCode, isListed: true });
 
     if (!coupon) {

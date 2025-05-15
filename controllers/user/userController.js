@@ -2,7 +2,7 @@ const User = require('../../models/userSchema')
 const Category=require('../../models/categorySchema')
 const Product=require('../../models/productSchema')
 const Brand=require('../../models/brandSchema')
-
+const Wallet=require('../../models/walletSchema')
 const nodemailer=require('nodemailer')
 const env=require('dotenv').config()
 const bcrypt=require('bcrypt')
@@ -67,8 +67,8 @@ const loadSignup=async(req,res)=>{
 const signUp=async(req,res)=>{
     try {
     
-        const{name,phone,email,password,confirm_password}=req.body
-        console.log('cpassword',confirm_password);
+        const{name,phone,email,password,confirm_password,referral}=req.body
+       
         if(password!==confirm_password){
             return res.render('signup',{message:'Password do not match'})
             
@@ -76,8 +76,16 @@ const signUp=async(req,res)=>{
         
         const findUser=await User.findOne({email})
         if(findUser){
-            return res.render('signup',{message:'User with this email already exist'})
+            return res.render('signup',{message:'User with this email already exist', formData: { name, phone,  referral }})
         }
+         if (referral && referral.trim()) {
+      const referralCode = referral.toUpperCase();
+      const referredUser = await User.findOne({ referralCode: referralCode });
+      if (!referredUser) {
+       
+        return res.render("signup",{message:'Invalid referral code',formData: { name, phone,email,  referral }});
+      }
+    }
         const otp=generateOtp()
        
     
@@ -87,7 +95,7 @@ const signUp=async(req,res)=>{
         }
       
         req.session.userOtp=otp
-        req.session.userData={name,phone,email,password};
+        req.session.userData={name,phone,email,password,referral};
         console.log('OTP sent',otp)
        
     
@@ -100,7 +108,18 @@ const signUp=async(req,res)=>{
     }
     }
     
-    
+    function generateReferralCode(input) {
+  if (!input || typeof input !== "string") return null;
+
+  const base = input.substring(0, 4).toUpperCase();
+
+  const randomNumber = Math.floor(Math.random() * 100)
+    .toString()
+    .padStart(2, "0");
+
+  return `${base}${randomNumber}`;
+}
+
 
 
 const securePassword=async(password)=>{
@@ -155,14 +174,65 @@ const verifyOtp=async(req,res)=>{
         if(otp===req.session.userOtp){
             const user = req.session.userData
             const passwordHash = await securePassword(user.password)
+
+ let referral = req.session.userData.referral;
+      
+      referral = referral.toUpperCase();
+      let referredUser;
+      if (referral && referral.trim()) {
+        referredUser = await User.findOne({ referralCode: referral });
+
+        let wallet = await Wallet.findOne({ userId: referredUser._id });
+        if (!wallet) {
+          wallet = new Wallet({
+            userId: referredUser._id,
+            balance: 0,
+            transactions: [],
+          });
+        }
+
+        wallet.balance += 500;
+
+        wallet.transactions.push({
+          amount: 500,
+          type: "credit",
+          description: "Referral Reward",
+        });
+
+        await wallet.save();
+      }
+
+          const referralCode = generateReferralCode(user.name)
             const saveUserData = new User({
                 name:user.name,
                 email:user.email,
                 phone:user.phone,
-                password:passwordHash
+                password:passwordHash,
+                 referralCode,
+                referredBy: referredUser?.name,
             })
              await saveUserData.save()
-             req.session.user=saveUserData._id
+ if (referral && referral.trim()) {
+        let wallet = await Wallet.findOne({ userId: saveUserData._id });
+        if (!wallet) {
+          wallet = new Wallet({
+            userId: saveUserData._id,
+            balance: 0,
+            transactions: [],
+          });
+        }
+
+        wallet.balance += 200;
+
+        wallet.transactions.push({
+          amount: 200,
+          type: "credit",
+          description: "Referral Reward",
+        });
+
+        await wallet.save();
+      }
+             req.session.user=saveUserData
              res.json({success:true,redirectUrl:'/'})
         }else{
             res.status(400).json({success:false,message:'Invalid OTP, Please try again'})
@@ -211,7 +281,7 @@ const login= async(req,res)=>{
         }
         const passwordMatch=await bcrypt.compare(password,findUser.password)
         if(!passwordMatch){
-            return res.render('login',{message:'Incorrect password'})
+            return res.render('login',{message:'Incorrect password',formData: { name, email }})
         }
         req.session.user=findUser._id
         res.redirect('/')
@@ -249,17 +319,17 @@ const loadShoppingPage = async (req, res) => {
         
       };
 
-// ✅ Step: Get only listed category IDs
+
 const listedCategories = await Category.find({ isListed: true }).select('_id');
 const listedCategoryIds = listedCategories.map(cat => cat._id.toString());
 
-// ✅ Step: Apply category filtering
+
 if (category && listedCategoryIds.includes(category)) {
   filter.category = category;
 } else if (!category) {
   filter.category = { $in: listedCategoryIds };
 } else {
-  filter.category = { $in: [] }; // If category is blocked, show nothing
+  filter.category = { $in: [] }; 
 }
 
 

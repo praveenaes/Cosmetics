@@ -128,6 +128,11 @@ const orderSchema = new Schema({
       enum: ['Pending', 'Success', 'Failed'],
       default: 'Failed'
     },
+    productStatus:{
+        type:String,
+        enum:["active","cancelled"],
+        default:'active'
+      },
     razorpayOrderId: {
       type: String,
       unique: true,

@@ -21,7 +21,7 @@ const userOrder = async (req, res) => {
 
     const query = req.query.query || ''; 
     const page = parseInt(req.query.page) || 1; 
-    const ordersPerPage = 4;  
+    const ordersPerPage = 3;  
     const skip = (page - 1) * ordersPerPage;  
 
     const userData = await User.findById(userId);
@@ -68,7 +68,7 @@ const generateOrderId = () => {
   return `ORD${dateString}-${randomNumber}`;
 };
 
-const placeOrder = async (req, res,next) => {
+const placeOrder = async (req, res) => {
   try {
     const userId = req.session.user
     const { addressId, paymentMethod,couponCode } = req.body;
@@ -90,7 +90,7 @@ const placeOrder = async (req, res,next) => {
     const cart = await Cart.findOne({ userId }).populate("items.productId");
 
     if (!cart || !cart.items.length) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Your cart is empty." });
+      return res.status(400).json({ success: false, message: "Your cart is empty." });
     }
     
     let cartItems = [];
@@ -98,7 +98,7 @@ const placeOrder = async (req, res,next) => {
       const product = item.productId;
     
       if (!product || product.isBlocked || product.quantity < item.quantity) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
+        return res.status(400).json({
           success: false,
           message: "Some products in your cart have limited stock or are unavailable. Please update your cart before placing the order.",
         });
@@ -116,7 +116,7 @@ const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
 let finalAmount = totalPrice < 15000 ? totalPrice + 500 - cart.discount : totalPrice - cart.discount;
 
 if(finalAmount>15000){
-  return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: Messages.COD_LIMIT_EXCEEDED });
+  return res.status(400).json({ success: false, message:'COD limit exceeds' });
 
 }
 
@@ -166,16 +166,19 @@ if(finalAmount>15000){
 
     await Cart.findOneAndUpdate({ userId }, { $set: { items: [],discount:0} });
 
-    return res.status(StatusCodes.OK).json({ success: true, message: Messages.ORDER_PLACED});
+    return res.status(200).json({ success: true, message:'order placed'});
 
   } catch (error) {
     console.log('error in place order',error);
-    
+     return res.status(500).json({
+        success: false,
+        message: 'Something went wrong while placing the order. Please try again later.',
+    });
   }
 };
 
 
-const placeWalletOrder = async (req, res, next) => {
+const placeWalletOrder = async (req, res) => {
   try {
     const userId = req.session.user
     const { addressId, paymentMethod,couponCode } = req.body;
@@ -309,7 +312,7 @@ let finalAmount = totalPrice < 15000 ? totalPrice + 500 - cart.discount : totalP
   }
 };
 
-const loadConfirmation = async (req, res,next) => {
+const loadConfirmation = async (req, res) => {
   try {
     const userId = req.session.user
 
@@ -359,34 +362,62 @@ const getInvoice=async(req,res)=>{
   }
 }
 
-const cancelOrder = async (req, res) => {
+const cancelOrder = async (req, res,next) => {
   try {
     const user = req.session.user;
     const { orderId, reason } = req.body;
 
     const order = await Order.findById(orderId);
-    if (!order) {
-      return res.status(404).json({ success: false, message: 'Order not found' });
-    }
-    await Order.findByIdAndUpdate(orderId, {
-      $set: { status: 'cancelled', cancelReason: reason }
-    });
 
-    const orderedItems = order.orderedItems;
-    for (const item of orderedItems) {
-      await Product.findByIdAndUpdate(item.product._id, {
-        $inc: { quantity: item.quantity }
+    const items = order.orderedItems;
+
+    let refundAmount = items
+      .filter(item => item.productStatus != 'cancelled') 
+      .reduce((acc, curr) => acc + curr.price, 0); 
+
+    if(order.paymentMethod !='cod' && order.paymentStatus != 'Failed'){
+      let wallet = await Wallet.findOne({ userId: user });
+
+      if (!wallet) {
+        wallet = new Wallet({ userId:user._id, balance: 0, transactions: [] });
+      }
+
+      wallet.balance += parseInt(refundAmount);
+    wallet.transactions.push({
+      amount:refundAmount,
+      type: "credit",
+      description: "Order cancellation Refund",
+      orderId:order._id,
+    });
+    await wallet.save();
+
+    }
+
+    await Order.findOneAndUpdate(
+      { _id: orderId },
+      { $set: { status: "cancelled", cancelReason: reason } },
+      { new: true }
+    );
+
+    const orderedItems = order.orderedItems.map((item) => ({
+      product: item.product,
+      quantity: item.quantity,
+    }));
+
+    for (let i = 0; i < orderedItems.length; i++) {
+      if(order.orderedItems[i].productStatus != 'cancelled'){
+      await Product.findByIdAndUpdate(orderedItems[i].product._id, {
+        $inc: { quantity: orderedItems[i].quantity },
       });
     }
+    }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: 'Order cancelled and products restocked'
-    });
-
+      message: 'Order cancelled successfully'
+    });    
   } catch (error) {
-    console.log('error in cancel order',error.message);
-   
+    next(error)
   }
 };
 
@@ -532,6 +563,7 @@ const createOrder = async (req, res) => {
       { userId: userId, "address._id": addressId },
       { "address.$": 1 } 
     ).lean();
+    console.log('addressData',addressData);
     
     if (!addressData || !addressData.address || addressData.address.length === 0) {
       throw new Error("Address not found");
@@ -595,7 +627,7 @@ const createOrder = async (req, res) => {
   }
 };
 
-const verifyPayment = async (req, res, next) => {
+const verifyPayment = async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount } = req.body;
 
