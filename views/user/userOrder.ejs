@@ -96,11 +96,14 @@
                                             <a style="text-decoration: none; color: black;" href="/product/<%= order.orderedItems[i].product._id %>"><%= order.orderedItems[i].product.productName %></a>
                                             <p class="text-muted mb-0">Qty:<%= order.orderedItems[i].quantity%></p>
                                             <p class="text-muted">Price: <%= order.orderedItems[i].product.salePrice %></p>
-                                         <%if( ['Processing','Pending'].includes(order.status) && order.orderedItems.length > 1 &&  order.orderedItems[i].productStatus === 'active' && order.paymentStatus != 'Failed'){%>
+                                         <%if( ['processing','pending'].includes(order.status) && order.orderedItems.length > 1 &&  order.orderedItems[i].productStatus === 'active' && order.paymentStatus != 'Failed'){%>
                                          <button class="btn btn-outline-danger btn-sm fw-semibold text-uppercase" onclick="cancelProduct('<%=order._id %>','<%= i%>')">cancel Product</button>
                                          <%}%>
                                          <%if(order.orderedItems[i].productStatus === 'cancelled'){%>
                                          <span class="badge bg-danger text-white">PRODUCT CANCELLED</span>
+                                         <%}%>
+                                         <%if(order.status==='pending'){%>
+                                        <a href="/retryPayment?orderId=<%=order.razorpayOrderId%>"><button class="btn btn-outline-warning btn-sm fw-semibold text-uppercase" >Retry Payment</button></a> 
                                          <%}%>
                                         </div>
                                     </div>
@@ -412,6 +415,82 @@
 
               // -------cancel order ending-------
 
+
+
+                  // cancel single product starting.......
+
+                async function cancelProduct(orderId,index){
+
+  const { value: reasonOption } = await Swal.fire({
+    title: 'Cancel Order',
+    input: 'select',
+    inputLabel: 'Select a reason for cancellation',
+    inputOptions: {
+      'Ordered by mistake': 'Ordered by mistake',
+      'Found a better price': 'Found a better price',
+      'Item no longer needed': 'Item no longer needed',
+      'Changed my mind': 'Changed my mind',
+      'Wrong item ordered': 'Wrong item ordered',
+      'Other': 'Other'
+    },
+    showCancelButton: true
+  });
+
+  if (!reasonOption) return;
+
+  let finalReason = reasonOption;
+
+  if (reasonOption === 'Other') {
+    const { value: otherReason } = await Swal.fire({
+      title: 'Cancel Order',
+      input: 'textarea',
+      inputLabel: 'Please provide a reason for cancellation',
+      inputPlaceholder: 'Type your reason here...',
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to provide a reason!';
+        }
+      }
+    });
+
+    if (!otherReason) return;
+    finalReason = otherReason;
+  }
+
+  try {
+    const response = await fetch('/cancelProduct', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ orderId, index,reason: finalReason }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      await Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Product cancelled successfully',
+        timer: 1500
+      });
+      location.reload();
+    } else {
+      throw new Error(data.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    await Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: error.message || 'Failed to cancel Product'
+    });
+  }
+}
+
+                    // cancel single product ending.......
         
     </script>
 

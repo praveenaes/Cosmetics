@@ -83,7 +83,7 @@ const Messages = {
 
     //order controller
     ORDER_PLACED: "Order placed successfully",
-    COD_LIMIT_EXCEEDED: "Cash on delivery is not applicable for amount above ₹15000!",
+    COD_LIMIT_EXCEEDED: "Cash on delivery is not applicable for amount above ₹1000!",
     INSUFFICIENT_WALLET_BALANCE: (balance) => `You only have ₹ ${balance} in your wallet!`,
     WALLET_NOT_FOUND: "Wallet not found",
     ORDER_NOT_FOUND: "Order not Found",
@@ -95,7 +95,7 @@ const Messages = {
     RETURN_REQUEST_REJECTED:"return request rejected",
     PAYMENT_SERVICE_UNAVAILABLE: "Payment service temporarily unavailable. Please try again later.",
     INSUFFICIENT_STOCK: (name, qty) => `The product "${name}" has only ${qty} items in stock.`,
-    
+    PRODUCT_BLOCKED:(name)=>`Currently ${name} is not available`
 
 
   };

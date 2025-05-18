@@ -173,7 +173,13 @@ header {
   left: 0;
   width: 100%;
   z-index: 1050; /* Ensure it's above the sidebar */
-}
+}.move-btn {
+    transition: transform 0.3s ease;
+  }
+
+  .move-btn:hover {
+    transform: translateX(5px); /* Move right by 5px on hover */
+  }
 
 </style>
     
@@ -194,8 +200,8 @@ header {
            <a href="/cart"><i class="fas fa-shopping-cart"></i></a>
             <a style="text-decoration: none; color: black;" href="/userProfile"><h5><%=user.name%></h5></a>
             <%}else {%>
-                <a href="/login"><button class="login">Login</button></a>
-                <a href="/signup"><button class="signup">Sign Up</button></a>
+                <a href="/login"><button class="btn btn-primary move-btn">Login</button></a>
+                <a href="/signup"><button class="btn btn-success move-btn">Signup</button></a>
      
              <%}%>
         </div>

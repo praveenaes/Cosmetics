@@ -115,8 +115,8 @@ const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
 
 let finalAmount = totalPrice < 15000 ? totalPrice + 500 - cart.discount : totalPrice - cart.discount;
 
-if(finalAmount>15000){
-  return res.status(400).json({ success: false, message:'COD limit exceeds' });
+if(finalAmount>1000){
+  return res.status(400).json({ success: false, message:'Cash on delivery is not available for purchase above ₹1000' });
 
 }
 
@@ -405,7 +405,7 @@ const cancelOrder = async (req, res,next) => {
     }));
 
     for (let i = 0; i < orderedItems.length; i++) {
-      if(order.orderedItems[i].productStatus != 'cancelled'){
+      if(order.paymentStatus != 'Failed'){
       await Product.findByIdAndUpdate(orderedItems[i].product._id, {
         $inc: { quantity: orderedItems[i].quantity },
       });
@@ -563,7 +563,7 @@ const createOrder = async (req, res) => {
       { userId: userId, "address._id": addressId },
       { "address.$": 1 } 
     ).lean();
-    console.log('addressData',addressData);
+    
     
     if (!addressData || !addressData.address || addressData.address.length === 0) {
       throw new Error("Address not found");
@@ -676,11 +676,11 @@ const verifyPayment = async (req, res) => {
     res.status(500).json({ success: false });
   }
 };
-const cancelProduct = async (req,res,next) => {
+const cancelProduct = async (req,res) => {
   try {
-   
+    
     const {orderId,reason,index} = req.body;
-    const userId = req.session.user._id;
+    const userId = req.session.user
 
     const order = await Order.findById(orderId);
 
@@ -706,8 +706,9 @@ const cancelProduct = async (req,res,next) => {
 
     const productId =canceledProduct.product._id;
     const quantity = canceledProduct.quantity;
+    
 
-    await Product.findByIdAndUpdate(productId, { $inc: { quantity: quantity } });
+  await Product.findByIdAndUpdate(productId, { $inc: { quantity: quantity } });
 
 
     order.orderedItems[index] = canceledProduct;
@@ -748,6 +749,7 @@ module.exports={
     cancelReturnRequest,
    createOrder,
    verifyPayment ,
-   loadConfirmation
+   loadConfirmation,
+   cancelProduct
   
 }

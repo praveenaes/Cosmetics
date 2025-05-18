@@ -102,6 +102,7 @@ router.put('/cancelOrder',userAuth,orderController.cancelOrder)
 router.post('/return', userAuth, uploads.array('images', 3), orderController.requestReturn);
 router.put('/cancelReturnRequest',userAuth,orderController.cancelReturnRequest)
 router.get('/confirmation',userAuth,orderController.loadConfirmation);
+router.put('/cancelProduct',userAuth,orderController.cancelProduct)
 
 //razorpay management
 router.post("/order/createOrder",userAuth,orderController.createOrder)
@@ -116,5 +117,10 @@ router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney);
 //retry payment management
 router.get("/paymentFailure",userAuth,retryPaymentController.getPaymentFailure)
 router.get('/retryPayment',userAuth,retryPaymentController.getRetryPayment)
+router.put('/retryPayment/cod',userAuth,retryPaymentController.retryPaymentCod)
+router.put('/retryPayment/wallet',userAuth,retryPaymentController.retryPaymentWallet)
+router.post('/retryPayment/razorpay',userAuth,retryPaymentController.retryPaymentRazorpay)
+
+
 
 module.exports=router

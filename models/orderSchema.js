@@ -38,6 +38,14 @@ const orderSchema = new Schema({
       price: {
         type: Number,
         default: 0
+      },
+       productStatus:{
+        type:String,
+        enum:["active","cancelled"],
+        default:'active'
+      },
+       ProductCancelReason:{
+        type:String,
       }
     }],
     address: {
@@ -128,11 +136,7 @@ const orderSchema = new Schema({
       enum: ['Pending', 'Success', 'Failed'],
       default: 'Failed'
     },
-    productStatus:{
-        type:String,
-        enum:["active","cancelled"],
-        default:'active'
-      },
+    
     razorpayOrderId: {
       type: String,
       unique: true,
@@ -140,7 +144,7 @@ const orderSchema = new Schema({
     },
 
     cancelReason:{
-      Type:String,
+      type:String,
     },
     returnImage:[{
       type:String,
