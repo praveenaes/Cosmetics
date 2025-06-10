@@ -37,10 +37,12 @@ const categoryInfo = async (req, res) => {
 
 
 const addCategory=async(req,res)=>{
-    console.log('hello')
+ 
     const{name,description}=req.body
     try {
-        const existingCategory=await Category.findOne({name})
+        const existingCategory = await Category.findOne({
+      name: { $regex: new RegExp(`^${name}$`, 'i') }
+    });
         if(existingCategory){
             return res.status(400).json({error:"Category already exists"})
         }
@@ -69,12 +71,17 @@ const addCategoryOffer=async(req,res)=>{
             return res.json({status:false,message:'Product with this category already have product offer'})
         }
         await Category.updateOne({_id:categoryId},{$set:{categoryOffer:percentage}})
+       
+for (const product of products) {
+    if (product.productOffer < percentage) {
+        const discountAmount = Math.floor(product.regularPrice * (percentage / 100));
+        product.salePrice = product.regularPrice - discountAmount;
+       
+        await product.save();
+    }
+}
 
-        for(const product of products){
-            product.productOffer=0
-            product.salesPrice=product.regularPrice
-            await product.save()
-        }
+
         res.json({status:true})
     } catch (error) {
         res.status(500).json({status:false,message:'Internal server error'})
@@ -144,11 +151,12 @@ const editCategory = async (req, res) => {
       const id = req.params.id;
       const { categoryName, description } = req.body;
   
-      
       const existingCategory = await Category.findOne({
-        name: categoryName,
-        _id: { $ne: id }  
-      });
+      name: { $regex: new RegExp(`^${categoryName}$`, 'i') },
+      _id: { $ne: id }
+    });
+
+      
   
       if (existingCategory) {
         return res.status(400).json({ error: 'Category already exists. Choose another name.' });

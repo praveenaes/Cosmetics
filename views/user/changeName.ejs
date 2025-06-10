@@ -1,0 +1,192 @@
+<%- include("../../views/partials/user/header") %>
+
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f7f8f9 0%, #f8f7f9 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save {
+            background: #2c10e6;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #1d77f5 !important;
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            background: #e13838;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #f37e5e;
+            transform: translateY(-2px);
+        }
+
+        .error-text {
+            color: #ee0e24;
+            font-size: 17px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>New Profile Name</h1>
+        
+        <form id="profileForm" method="POST" action="/update-profile-name" >
+            <div class="form-group">
+               
+                <input type="text" id="profileName" name="profileName" placeholder="Profile Name">
+                <div id="error-message" class="error-text"></div>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" style="background-color: rgb(71, 132, 246);" class="btn-save">Save</button>
+<button type="button" class="btn-cancel" onclick="window.location.href='/userProfile'">Cancel</button>
+
+            </div>
+        </form>
+        
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+    document.getElementById('profileForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const profileName = document.getElementById('profileName').value.trim();
+        const errorDiv = document.getElementById('error-message');
+        const messageDiv = document.getElementById('message');
+
+        // Reset messages
+        errorDiv.style.display = 'none';
+        messageDiv.style.display = 'none';
+
+        // Validation: empty check
+        if (profileName === '') {
+            errorDiv.textContent = 'Please enter a profile name';
+            errorDiv.style.display = 'block';
+            return;
+        }
+
+        // Validation: alphabets only
+        const alphabetRegex = /^[A-Za-z\s]+$/;
+        if (!alphabetRegex.test(profileName)) {
+            errorDiv.textContent = 'Profile name can contain only alphabets and spaces';
+            errorDiv.style.display = 'block';
+            return;
+        }
+
+        try {
+            const response = await fetch('/update-profile-name', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ profileName })
+            });
+
+            if (response.ok) {
+                messageDiv.textContent = 'Profile name saved successfully!';
+                messageDiv.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = '/userProfile';
+                }, 1000);
+            } else {
+                const errorText = await response.text();
+                errorDiv.textContent = errorText || 'Something went wrong.';
+                errorDiv.style.display = 'block';
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            errorDiv.textContent = 'Failed to update. Please try again.';
+            errorDiv.style.display = 'block';
+        }
+    });
+</script>

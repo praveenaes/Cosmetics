@@ -71,15 +71,17 @@ router.put('/handleReturn',adminAuth,orderController.handleReturn)
 router.put('/updateReturnStatus',adminAuth,orderController.updateReturnStatus)
 
 
-//coupan management
+//coupon management
 router.get('/coupon',adminAuth,couponController.getCoupon)
 router.post('/coupon',adminAuth,couponController.addCoupon)
 router.put('/coupon',adminAuth,couponController.editCoupon)
 router.delete('/coupon',adminAuth,couponController.deleteCoupon)
 
-// //sales management
+//sales management
 router.get('/sales',adminAuth,salesController.getSales);
 router.get('/salesReport',adminAuth,salesController.getSalesReport);
 
+//dashboard
+router.get('/dashboard',adminAuth,salesController.getDashboard)
 
 module.exports=router 

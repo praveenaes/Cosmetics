@@ -95,8 +95,8 @@ const Messages = {
     RETURN_REQUEST_REJECTED:"return request rejected",
     PAYMENT_SERVICE_UNAVAILABLE: "Payment service temporarily unavailable. Please try again later.",
     INSUFFICIENT_STOCK: (name, qty) => `The product "${name}" has only ${qty} items in stock.`,
-    PRODUCT_BLOCKED:(name)=>`Currently ${name} is not available`
-
+    PRODUCT_BLOCKED:(name)=>`Currently ${name} is not available`,
+    ORDER_CANCELLED_SUCCESSFULLY:'Order cancel success'
 
   };
   

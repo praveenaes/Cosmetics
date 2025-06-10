@@ -100,7 +100,7 @@
      return false
     }else{
         error2.style.display='none'
-        //error2.innerHTML=''
+       
         return true
     }
    }
@@ -109,10 +109,10 @@
     const phoneval = phoneid.value.trim();
     const phonePattern = /^\d{10}$/;
 
-    if (!phonePattern.test(phoneval)) {
+    if (!phonePattern.test(phoneval)|| /^0+$/.test(phoneval)) {
         error3.style.display = 'block';
         error3.innerHTML = 'Enter a valid 10-digit phone number';
-        console.log("JavaScript is working!");
+        
         return false;
     } else {
         error3.style.display = 'none';

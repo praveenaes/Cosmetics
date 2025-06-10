@@ -96,7 +96,7 @@ const placeOrder = async (req, res) => {
     let cartItems = [];
     for (let item of cart.items) {
       const product = item.productId;
-    
+    console.log('product',product)
       if (!product || product.isBlocked || product.quantity < item.quantity) {
         return res.status(400).json({
           success: false,
@@ -105,10 +105,11 @@ const placeOrder = async (req, res) => {
       }
     
       cartItems.push({
-        product: product,
-        quantity: item.quantity,
-        price: item.totalPrice,
-      });
+  product:product,
+  quantity: item.quantity,
+  price: item.totalPrice
+});
+
     }
     
 const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
@@ -165,6 +166,7 @@ if(finalAmount>1000){
    
 
     await Cart.findOneAndUpdate({ userId }, { $set: { items: [],discount:0} });
+    
 
     return res.status(200).json({ success: true, message:'order placed'});
 
@@ -214,7 +216,7 @@ const placeWalletOrder = async (req, res) => {
       }
     
       cartItems.push({
-        product: product,
+        product:product,
         quantity: item.quantity,
         price: item.totalPrice,
       });
@@ -524,7 +526,7 @@ const createOrder = async (req, res) => {
       }
     
       cartItems.push({
-        product: product,
+        product:product,
         quantity: item.quantity,
         price: item.totalPrice,
       });

@@ -13,9 +13,16 @@ const productDetails = async (req, res) => {
         const product = await Product.findById(productId).populate('category');
         
         const findCategory = product.category;
-        const CategoryOffer = findCategory?.CategoryOffer || 0;
+        const CategoryOffer = findCategory?.categoryOffer || 0;
         const productOffer = product.productOffer || 0;
-        const totalOffer = CategoryOffer + productOffer;
+         const maxOffer = Math.max(CategoryOffer, productOffer);
+
+
+         let salePrice = product.regularPrice;
+        if (maxOffer > 0) {
+            const discountAmount = Math.floor(product.regularPrice * (maxOffer / 100));
+            salePrice = product.regularPrice - discountAmount;
+        }
 
         // 🌟 Find Related Products (same category but exclude the current product)
         const relatedProducts = await Product.find({
@@ -25,11 +32,12 @@ const productDetails = async (req, res) => {
 
         res.render('product-details', {
             user: userData,
-            product: product,
+            product: product.toObject(),
             quantity: product.quantity,
-            totalOffer: totalOffer,
+            totalOffer: maxOffer,
             category: findCategory,
-            relatedProducts: relatedProducts // 🌟 Pass related products to EJS
+            relatedProducts: relatedProducts,
+            salePrice
         });
     } catch (error) {
         console.error('Error fetching product details:', error);

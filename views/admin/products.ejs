@@ -12,7 +12,7 @@
         <div class="input-group input-group-sm border border-1 border-grey" style="width: 600px; margin-left: 230px;">
           <input type="text" 
                  class="form-control border-0" 
-                 placeholder="Search products or brands" 
+                 placeholder="Search products " 
                  name="search" 
                  value="<%= query && query.search ? query.search : '' %>">
           
@@ -49,7 +49,8 @@
             </tr>
         </thead>
         <tbody>
-            <%for(let i=data.length-1;i>=0;i--){%>
+            <%for(let i = 0; i < data.length; i++){%>
+        
             <tr>
                 <td><%=data[i].productName%></td>
                 <td><%=data[i].brand%></td>
@@ -140,14 +141,20 @@
                 percentage:amount,
                 productId:productId
             },
-            success:(response)=>{
-                if(response.status===true){
-                    location.reload()
-                    Swal.fire('Offer added','The offer has been removed','Success')
-                }else{
-                    alert('Failed')
-                }
-            }
+            success: (response) => {
+    if(response.status === true){
+        Swal.fire('Offer added', 'The offer has been added', 'success').then(() => {
+            location.reload();
+        });
+    } else {
+       Swal.fire({
+        icon: 'error',
+        title: 'Failed',
+        text: response.message || 'Something went wrong. Please try again.',
+        confirmButtonText: 'OK'
+    });
+    }
+}
         })
     }
 

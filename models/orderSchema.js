@@ -18,7 +18,7 @@ const orderSchema = new Schema({
         _id: Schema.Types.ObjectId,
         productName: String,
         description: String,
-        categoryId: Schema.Types.ObjectId,
+        category: Schema.Types.ObjectId,
         productNumber: String,
         regularPrice: Number,
         salePrice: Number,
@@ -28,7 +28,7 @@ const orderSchema = new Schema({
         isBlocked: Boolean,
         productImage: [String],
         status: String,
-        brandId: Schema.Types.ObjectId,
+        brand: String,
         sizeId: Schema.Types.ObjectId
       },
       quantity: {

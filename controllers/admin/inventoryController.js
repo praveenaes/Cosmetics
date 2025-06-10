@@ -17,6 +17,7 @@ const getInventory = async (req, res) => {
     const totalPages = Math.ceil(totalProducts / limit);
 
     const products = await Product.find(query)
+    .sort({createdAt:-1})
       .populate("category")
       .skip(skip)
       .limit(limit);

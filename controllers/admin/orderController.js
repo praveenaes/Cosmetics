@@ -2,6 +2,10 @@ const Product=require('../../models/productSchema')
 const User=require('../../models/userSchema')
 const Order=require('../../models/orderSchema')
 const Wallet=require('../../models/walletSchema')
+const StatusCodes  = require('../../helpers/statusCodes');
+const Messages=require('../../helpers/messages')
+
+
 
 const getOrder = async (req, res) => {
   try {
@@ -117,34 +121,52 @@ const updateStatus = async (req, res, next) => {
 
 const orderCancel = async (req, res, next) => {
     try {
-        console.log('hello1');
+        
         const { orderId } = req.body;
-        const order = await Order.findById(orderId);
-        if (!order) {
-            return res.status(404).send('Order not found');
-        }
-        for (let item of order.orderedItems) {
-            const updatedProduct = await Product.findOneAndUpdate(
-                { _id: item.product._id },
-                { $inc: { quantity: item.quantity } }, 
-                { new: true }
-            );
 
-            if (updatedProduct) {
-                console.log(`Updated product stock for ${updatedProduct.productName}. Quantity added: ${item.quantity}`);
-            } else {
-                console.log(`Product not found: ${item.product._id}`);
-            }
-        }
-       
-        await Order.findOneAndUpdate(
-            { _id: orderId },
-            { $set: { status: "cancelled" } },
-            { new: true }
-        );
+    const order = await Order.findById(orderId);
+    if (order.paymentMethod != "cod" && order.paymentStatus != "Failed") {
+      let wallet = await Wallet.findOne({ userId: order.userId });
 
-        console.log('hello2');
-        res.status(200).json({success:true,message:'ordercancelled successfully'})
+      if (!wallet) {
+        wallet = new Wallet({
+          userId: order.userId,
+          balance: 0,
+          transactions: [],
+        });
+      }
+
+      wallet.balance += parseInt(order.finalAmount);
+      wallet.transactions.push({
+        amount: order.finalAmount,
+        type: "credit",
+        description: "Order cancellation Refund",
+        orderId: order._id,
+      });
+      await wallet.save();
+    }
+
+    await Order.findOneAndUpdate(
+      { _id: orderId },
+      { $set: { status: "cancelled" } },
+      { new: true }
+    );
+
+    const orderedItems = order.orderedItems.map((item) => ({
+      product: item.product,
+      quantity: item.quantity,
+    }));
+
+    for (let i = 0; i < orderedItems.length; i++) {
+      await Product.findByIdAndUpdate(orderedItems[i].product._id, {
+        $inc: { quantity: orderedItems[i].quantity },
+      });
+    }
+
+    return res.status(StatusCodes.SUCCESS).json({
+      success: true,
+      message: Messages.ORDER_CANCELLED_SUCCESSFULLY,
+    });
     } catch (error) {
         console.error(error);
         res.status(500).json({success:false,message:'order not found'})

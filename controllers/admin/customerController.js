@@ -20,7 +20,7 @@ const customerInfo=async(req,res)=>{
             ],
         })
        
-        
+        .sort({ _id: -1 })
         .limit(limit*1)
         .skip((page-1)*limit)
         .exec();
