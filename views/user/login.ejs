@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,33 +8,38 @@
     <link rel="stylesheet" href="signup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
+
 <body>
     <div class="signup-container">
         <div class="signup-form">
             <h2>Log In</h2>
-            <% if(locals.message && message.length > 0) { %>
-                <span style="color: crimson; font-size: 18px; font-weight: bold; padding: 20px;"><%= message %></span>
-             <% } %>
-            <form id="signupForm" method="post" action="/login" onsubmit="return validateForm()">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter name" value="<%= typeof formData !== 'undefined' ? formData.name : '' %>" >
-                <div id="error1" class="error_message"></div>
+            <% if(locals.message && message.length> 0) { %>
+                <span style="color: crimson; font-size: 18px; font-weight: bold; padding: 20px;">
+                    <%= message %>
+                </span>
+                <% } %>
+                    <form id="signupForm" method="post" action="/login" onsubmit="return validateForm()">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter name"
+                            value="<%= typeof formData !== 'undefined' ? formData.name : '' %>">
+                        <div id="error1" class="error_message"></div>
 
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter email" value="<%= typeof formData !== 'undefined' ? formData.email : '' %>" >
-                <div id="error2" class="error_message"></div>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Enter email"
+                            value="<%= typeof formData !== 'undefined' ? formData.email : '' %>">
+                        <div id="error2" class="error_message"></div>
 
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter password">
-                <div id="error3" class="error_message"></div>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter password">
+                        <div id="error3" class="error_message"></div>
 
-                <button type="submit" class="signup-button" style="width:245px" >Log In</button>
-            </form>
-            <a href="/auth/google" style="width: 230px; background-color: #007bff;" class="google-signup"><i class="fab fa-google"></i> Login with Google</a>
-            <a class="tag" href="/forgotPassword" 
-   style="color: #007bff; text-decoration: none; margin-left: 150px; font-size: 14px; margin-top: 10px; display: inline-block;">
-   Forgot Password
-</a>
+                        <button type="submit" style="margin-left: 5px;" class="signup-button" style="width:245px">Log
+                            In</button>
+                    </form>
+                    <a href="/auth/google" class="google-signup"><i class="fab fa-google"></i> Login with Google</a>
+                    <a class="tag" href="/forgotPassword">
+                        Forgot Password
+                    </a>
 
         </div>
         <div class="signup-image">
@@ -57,21 +63,27 @@
 
             const alpha = /[a-zA-Z]/;
             const digit = /\d/;
+            const namepattern = /^[A-Za-z\s]+$/;
 
-           
             if (name === "") {
                 document.getElementById("error1").innerText = "Name cannot be empty!";
                 isValid = false;
+            } else if (!/^[A-Za-z]+$/.test(name)) {
+                document.getElementById("error1").innerText = "Name must contain only letters!";
+                isValid = false;
+            } else {
+                document.getElementById("error1").innerText = ""; // Clear error if valid
             }
 
-           
+
+
             let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(email)) {
                 document.getElementById("error2").innerText = "Enter a valid email!";
                 isValid = false;
             }
 
-            
+
             if (password.length < 8) {
                 document.getElementById("error3").innerText = "Password must be at least 8 characters long!";
                 isValid = false;
@@ -84,4 +96,5 @@
         }
     </script>
 </body>
+
 </html>

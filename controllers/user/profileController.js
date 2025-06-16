@@ -57,35 +57,57 @@ const getForgotPassPage = async (req, res) => {
 
 const forgotEmailvalid = async (req, res) => {
     try {
-        const { email } = req.body
-        const findUser = await User.findOne({ email })
+        const { email } = req.body;
+        const findUser = await User.findOne({ email });
+
         if (findUser) {
-            const otp = generateOtp()
-            const emailSent = await sendVerificationEmail(email, otp)
+            const otp = generateOtp();
+            const emailSent = await sendVerificationEmail(email, otp);
+
             if (emailSent) {
                 req.session.userOtp = otp;
-                req.session.email = email
-                res.render('forgotPass-otp')
-                console.log('OTP:', otp)
+                req.session.otpGeneratedAt = Date.now(); // Store the generation time
+                req.session.email = email;
 
+                console.log('OTP:', otp);
+                res.render('forgotPass-otp');
             } else {
-                res.json({ success: false, message: 'Failed to send OTP.Please try again' })
+                res.json({ success: false, message: 'Failed to send OTP. Please try again' });
             }
 
         } else {
             res.render('forgot-password', {
                 message: 'User with this email does not exist'
-            })
+            });
         }
     } catch (error) {
-        res.redirect('/pageNotFound')
+        res.redirect('/pageNotFound');
     }
-}
+};
+
+
+const OTP_EXPIRY_TIME = 1 * 60 * 1000; // 5 minutes in milliseconds
+
 const verifyForgotPassOtp = async (req, res) => {
     try {
         console.log('Received OTP:', req.body.otp);
         console.log('Stored OTP:', req.session.userOtp);
 
+        const currentTime = Date.now();
+        const otpGeneratedTime = req.session.otpGeneratedAt;
+
+        // Check if OTP expired
+        if (!otpGeneratedTime || (currentTime - otpGeneratedTime) > OTP_EXPIRY_TIME) {
+            console.log('OTP expired');
+            return res.json({
+                success: false,
+                message: 'OTP has expired. Please request a new one.'
+            });
+        }
+
+
+
+        // Check if OTP matches
         if (req.body.otp === req.session.userOtp) {
             console.log('OTP matched, redirecting to /reset-password');
             return res.json({
@@ -108,6 +130,7 @@ const verifyForgotPassOtp = async (req, res) => {
         });
     }
 };
+
 
 const getResetPassPage = async (req, res) => {
     try {
@@ -162,11 +185,10 @@ const securePassword = async (password) => {
     }
 }
 
-
 const postNewPassword = async (req, res) => {
     try {
         const { newPass1, newPass2 } = req.body;
-        const email = req.session.email;
+        const email = req.session.email; // ✅ use email here
 
         const user = await User.findOne({ email });
 
@@ -174,7 +196,6 @@ const postNewPassword = async (req, res) => {
             return res.redirect('/pageNotFound');
         }
 
-        // Check if passwords match
         if (newPass1 !== newPass2) {
             return res.render('reset-password', {
                 message: 'Passwords do not match',
@@ -182,7 +203,6 @@ const postNewPassword = async (req, res) => {
             });
         }
 
-        // Check if new password is same as old password
         const isSamePassword = await bcrypt.compare(newPass1, user.password);
         if (isSamePassword) {
             return res.render('reset-password', {
@@ -191,14 +211,13 @@ const postNewPassword = async (req, res) => {
             });
         }
 
-        // If all good, hash and update
         const passwordHash = await securePassword(newPass1);
         await User.updateOne(
-            { email: email },
+            { _id: user._id },
             { $set: { password: passwordHash } }
         );
 
-        // Clear sensitive session data
+        // Clear session
         req.session.userOtp = null;
         req.session.email = null;
         req.session.userData = null;
@@ -206,7 +225,7 @@ const postNewPassword = async (req, res) => {
         return res.redirect('/login');
 
     } catch (error) {
-        console.log("Error in postNewPassword:", error);
+        console.log("Error in postNewPassword:", error.message);
         res.redirect('/pageNotFound');
     }
 };
@@ -257,16 +276,18 @@ const changeEmailvalid = async (req, res) => {
 
     if (emailSent) {
       req.session.userOtp = otp;
-      req.session.otpGeneratedAt = Date.now();
-      req.session.userData = req.body;
+      req.session.otpExpiry = Date.now() + 60000; // ✅ This fixes the conflict
+
+      // ✅ Fixed this line
+      req.session.userData = { email };
+
       req.session.email = email;
 
-      // ✅ Calculate remaining time
-      const remainingTime = 60; // Always 60 when initially sending OTP
+      const remainingTime = 60;
 
       res.render('change-email-otp', {
         user: userData,
-        remainingTime // ⏲️ Pass this to EJS
+        remainingTime
       });
 
       console.log('Email sent', email);
@@ -282,6 +303,7 @@ const changeEmailvalid = async (req, res) => {
 };
 
 
+
 const verifyEmailOtp = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -289,17 +311,15 @@ const verifyEmailOtp = async (req, res) => {
 
     const enteredOtp = req.body.otp;
     const originalOtp = req.session.userOtp;
-    const otpGeneratedAt = req.session.otpGeneratedAt;
+    const otpExpiry = req.session.otpExpiry;
 
-    const OTP_VALID_DURATION = 60 * 1000;
     const currentTime = Date.now();
-    const elapsedTime = currentTime - otpGeneratedAt;
-    const remainingTime = Math.max(0, 60 - Math.floor(elapsedTime / 1000)); // 🧠 This is the key fix!
+    const remainingTime = Math.max(0, Math.floor((otpExpiry - currentTime) / 1000));
 
     console.log('Entered OTP:', enteredOtp);
 
     // ✅ Expired OTP
-    if (!otpGeneratedAt || elapsedTime > OTP_VALID_DURATION) {
+    if (!otpExpiry || currentTime > otpExpiry) {
       return res.render('change-email-otp', {
         user: usersData,
         message: 'OTP expired. Please request a new one.',
@@ -311,8 +331,8 @@ const verifyEmailOtp = async (req, res) => {
     // ✅ OTP matched
     if (enteredOtp === originalOtp) {
       req.session.userOtp = null;
-      req.session.otpGeneratedAt = null;
-      req.session.userData = req.body.userData;
+      req.session.otpExpiry = null;
+      
 
       return res.render('new-email', {
         user: usersData,
@@ -326,7 +346,7 @@ const verifyEmailOtp = async (req, res) => {
         user: usersData,
         message: 'OTP not matching',
         userData: req.session.userData,
-        remainingTime // ⏲️ Pass remaining time to the EJS view
+        remainingTime
       });
     }
 
@@ -377,7 +397,7 @@ const changePassword = async (req, res) => {
     try {
         const userId = req.session.user;
         const usersData = await User.findById(userId);
-        res.render('change-password', { user: usersData })
+        res.render('reset-password', { user: usersData })
     } catch (error) {
         res.redirect('/pageNotFound')
     }
@@ -405,6 +425,7 @@ const changePasswordValid = async (req, res) => {
 
         if (emailSent) {
             req.session.userOtp = otp;
+            req.session.otpExpiresAt = Date.now() + 60000; // <-- Set OTP expiry
             req.session.userData = req.body;
             req.session.email = email;
 
@@ -425,17 +446,31 @@ const changePasswordValid = async (req, res) => {
 
 
 const verifyChangePassOtp = async (req, res) => {
-    try {
-        const enteredOtp = req.body.otp
-        if (enteredOtp === req.session.userOtp) {
-            res.json({ success: true, redirectUrl: '/reset-password' })
-        } else {
-            res.json({ success: false, message: 'OTP not matching' })
-        }
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'An error occured. Please try again later' })
+  try {
+    const enteredOtp = req.body.otp;
+    const storedOtp = req.session.userOtp;
+    const otpExpiry = req.session.otpExpiresAt;
+
+    // Check if OTP is expired
+    if (!otpExpiry || Date.now() > otpExpiry) {
+      return res.json({ success: false, message: 'OTP has expired. Please request a new one.' });
     }
-}
+
+    // Check if OTP matches
+    if (enteredOtp === storedOtp) {
+      // Optionally clear OTP after successful validation
+      req.session.userOtp = null;
+      req.session.otpExpiresAt = null;
+
+      return res.json({ success: true, redirectUrl: '/reset-password' });
+    } else {
+      return res.json({ success: false, message: 'OTP not matching' });
+    }
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'An error occurred. Please try again later' });
+  }
+};
 
 const resendChangePasswordOtp = async (req, res) => {
     try {
@@ -452,7 +487,7 @@ const resendChangePasswordOtp = async (req, res) => {
 
         if (emailSent) {
             req.session.userOtp = otp;
-            req.session.otpTimestamp = Date.now();
+            req.session.otpExpiresAt = Date.now() + 60000; // <-- Set expiry correctly
             console.log('Resent OTP:', otp);
             res.json({ success: true });
         } else {
@@ -464,6 +499,7 @@ const resendChangePasswordOtp = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
+
 
 const userAddress = async (req, res) => {
     try {

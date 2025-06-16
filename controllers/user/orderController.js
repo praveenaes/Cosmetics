@@ -432,7 +432,7 @@ const requestReturn = async (req, res) => {
     const order = await Order.findOne({ _id: orderId, userId: userId });
 
     if (!order) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
+      return res.status(400).json({
         success: false,
         message: "Order not found or does not belong to the user",
       });
@@ -448,7 +448,7 @@ const requestReturn = async (req, res) => {
       },
     });
 
-    return res.status(StatusCodes.OK).json({
+    return res.status(200).json({
       success: true,
       message: "Return request submitted successfully",
     });
@@ -456,7 +456,7 @@ const requestReturn = async (req, res) => {
     console.log('Error in request return:', error.message);
 
     // Use a proper error status code and error message
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    return res.status(500).json({
       success: false,
       message: "An error occurred while processing your return request",
     });
@@ -473,7 +473,7 @@ const cancelReturnRequest = async (req, res) => {
     const order = await Order.findOne({ _id: orderId, userId });
 
     if (!order) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
+      return res.status(400).json({
         success: false,
         message:'order not found'
       });
@@ -490,13 +490,14 @@ const cancelReturnRequest = async (req, res) => {
       },
     });
 
-    return res.status(StatusCodes.OK).json({
+    return res.status(200).json({
       success: true,
       message: 'return request cancelled'
     });
 
   } catch (error) {
-    next(error);
+    console.log('error in cancel return request',error);
+    
   }
 };
 
