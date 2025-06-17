@@ -524,10 +524,10 @@ body {
 .add-to-cart-btn {
   width: 140px;
   height: 40px;
-  background: linear-gradient(135deg, rgb(5, 164, 5), rgb(5, 164, 5));
+  background: linear-gradient(135deg, rgb(8, 219, 8), rgb(8, 219, 8));
   color: rgb(247, 244, 244);
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   font-family: inherit;
   font-size: 14px;
@@ -556,7 +556,7 @@ body {
 }
 
 .add-to-cart-btn:hover {
-  background: linear-gradient(135deg, rgb(6, 192, 6), rgb(6, 192, 6));
+  background: linear-gradient(135deg, rgb(9, 236, 9), rgb(9, 236, 9));
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(10, 10, 108, 0.4);
 }
@@ -745,7 +745,7 @@ body {
                 <span class="text-muted"><strike>₹<%= products[i].regularPrice.toLocaleString('en-IN') %></strike></span>
               </p>
             </a>
-            <button style="width: 140px; height: 40px; background-color: #eff319; color: black;" class="add-to-cart-btn" data-id="<%= products[i]._id %>">Add to Cart</button>
+            <button style="width: 140px; height: 50px;  color: rgb(247, 243, 243);" class="add-to-cart-btn" data-id="<%= products[i]._id %>">Add to Cart</button>
           </div>
         <% } %>
       </main>
