@@ -8,30 +8,50 @@ const env = require('dotenv').config()
 const bcrypt = require('bcrypt')
 
 const loadHomepage = async (req, res) => {
-    try {
-        const user = req.session.user
-        const categories = await Category.find({ isListed: true })
-        let productData = await Product.find(
-            {
-                isBlocked: false,
-                category: { $in: categories.map(category => category._id) }, quantity: { $gt: 0 }
-            }
-        )
+  try {
+    const user = req.session.user;
+    const categories = await Category.find({ isListed: true });
 
-        productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn))
-        productData = productData.slice(0, 6)
-        if (user) {
-            const userData = await User.findOne({ _id: user })
-            return res.render('homepage', { user: userData, products: productData })
-        }
-        return res.render('homepage', { user: null, products: productData });
+    let productData = await Product.find({
+      isBlocked: false,
+      category: { $in: categories.map(category => category._id) },
+      quantity: { $gt: 0 }
+    });
 
-    } catch (error) {
-        console.log('Home page not found', error.message);
-        res.status(500).send('Server error')
+    productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+    productData = productData.slice(0, 6);
 
+    let cartCount = 0;
+    let wishlistCount = 0;
+    let userData = null;
+
+    if (user) {
+      userData = await User.findById(user);
+
+      const cart = await Cart.findOne({ userId: user });
+      if (cart && cart.items.length > 0) {
+        cartCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+      }
+
+      const wishlist = await Wishlist.findOne({ userId: user });
+      if (wishlist && wishlist.products.length > 0) {
+        wishlistCount = wishlist.products.length;
+      }
     }
-}
+
+    return res.render('homepage', {
+      user: userData,
+      products: productData,
+      cartCount,
+      wishlistCount
+    });
+
+  } catch (error) {
+    console.log('Home page not found', error.message);
+    res.status(500).send('Server error');
+  }
+};
+
 
 const pageNotFound = async (req, res) => {
     try {

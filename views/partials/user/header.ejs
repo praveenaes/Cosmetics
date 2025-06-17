@@ -285,16 +285,26 @@
         </div>
         <div class="icons">
             <%if(user){%>
-                <a href="/logout" class="logout-link btn btn-danger" style="margin-top: 10px;">Logout</a>
-
-                <a href="/wishlist"><i class="fas fa-heart"></i></a>
-                <a href="/cart"><i class="fas fa-shopping-cart"></i></a>
-                <a style="text-decoration: none; color: black;" href="/userProfile">
-                    <h5 style="font-family: 'Poppins', sans-serif;">
-                        <%= user.name %>
-                    </h5>
-
+                <!-- Wishlist -->
+                <a href="/wishlist" class="position-relative mx-2">
+                    <i class="fas fa-heart fs-5 text-dark"></i>
+                    <% if (wishlistCount> 0) { %>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <%= wishlistCount %>
+                        </span>
+                        <% } %>
                 </a>
+
+                <!-- Cart -->
+                <a href="/cart" class="position-relative mx-2">
+                    <i class="fas fa-shopping-cart fs-5 text-dark"></i>
+                    <% if (cartCount> 0) { %>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <%= cartCount %>
+                        </span>
+                        <% } %>
+                </a>
+
                 <%}else {%>
                     <a href="/login"><button class="btn btn-primary move-btn">Login</button></a>
                     <a href="/signup"><button style="background-color: rgb(240, 115, 179);color: white;"
