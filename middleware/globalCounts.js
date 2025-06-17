@@ -4,6 +4,7 @@ const User = require('../models/userSchema');
 module.exports = async (req, res, next) => {
   try {
     if (req.session.user) {
+        console.log("User in session:", req.session.user);
       const userData = await User.findById(req.session.user).lean();
       const cart = await Cart.findOne({ userId: userData._id }).lean();
 
@@ -27,6 +28,8 @@ module.exports = async (req, res, next) => {
       res.locals.cartCount = 0;
       res.locals.wishlistCount = 0;
     }
+console.log("cartCount:", res.locals.cartCount);
+console.log("wishlistCount:", res.locals.wishlistCount);
 
     next();
   } catch (err) {
@@ -36,6 +39,4 @@ module.exports = async (req, res, next) => {
     next();
   }
 };
-console.log("User in session:", req.session.user);
-console.log("cartCount:", res.locals.cartCount);
-console.log("wishlistCount:", res.locals.wishlistCount);
+
