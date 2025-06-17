@@ -36,3 +36,6 @@ module.exports = async (req, res, next) => {
     next();
   }
 };
+console.log("User in session:", req.session.user);
+console.log("cartCount:", res.locals.cartCount);
+console.log("wishlistCount:", res.locals.wishlistCount);
