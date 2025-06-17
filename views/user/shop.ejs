@@ -110,7 +110,7 @@ body {
 }
 
 .search-button:hover {
-  background: linear-gradient(135deg, #20c997, #17a2b8); /* Darker green on hover */
+  background: linear-gradient(135deg, #343dea, #3131e1); /* Darker green on hover */
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
 }
@@ -153,7 +153,7 @@ body {
 }
 
 .clear-btn:hover {
-  background: linear-gradient(135deg, #ff8c00, #ff6b35); /* Darker orange on hover */
+  background: linear-gradient(135deg, #f6f5f3, #f8f6f5); /* Darker orange on hover */
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(253, 126, 20, 0.3);
 }
@@ -296,16 +296,16 @@ body {
 .filter-item a:hover {
   background-color: #f8f9fa;
   color: #2c3e50;
-  border-color: #db7093;
+  border-color: #1857ec;
   box-shadow: 0 2px 8px rgba(219, 112, 147, 0.15);
   transform: translateY(-1px);
 }
 
 /* Categories and Price Filtering - Pink Color When Selected */
 .filter-item.active a {
-  background: linear-gradient(135deg, #db7093, #c06080); /* Pink gradient */
+  background: linear-gradient(135deg, #1857ec, #1857ec); /* Pink gradient */
   color: white;
-  border-color: #db7093;
+  border-color: #1857ec;
   box-shadow: 0 4px 12px rgba(219, 112, 147, 0.3);
   font-weight: 600;
 }
@@ -745,7 +745,7 @@ body {
                 <span class="text-muted"><strike>₹<%= products[i].regularPrice.toLocaleString('en-IN') %></strike></span>
               </p>
             </a>
-            <button style="width: 140px; height: 40px; background-color: #0a0a6c;" class="add-to-cart-btn" data-id="<%= products[i]._id %>">Add to Cart</button>
+            <button style="width: 140px; height: 40px; background-color: #eff319;color: black;" class="add-to-cart-btn" data-id="<%= products[i]._id %>">Add to Cart</button>
           </div>
         <% } %>
       </main>
