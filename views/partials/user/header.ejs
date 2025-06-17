@@ -270,6 +270,27 @@
                 margin: 8px 0;
             }
         }
+        .icon-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 0 10px;
+  }
+
+  .icon-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: red;
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-weight: bold;
+  }
+
+  .icon-wrapper i {
+    font-size: 20px;
+  }
     </style>
 
 
@@ -280,15 +301,30 @@
         style="height: 80px; position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background-color: white;">
         <div class="brand">Women Fashion...</div>
         <div class="nav-links">
-            <a href="/" class="nav-item">Homeee</a>
+            <a href="/" class="nav-item">Home</a>
             <a href="/shop" class="nav-item">Shop</a>
         </div>
         <div class="icons">
             <%if(user){%>
                 <a href="/logout" class="logout-link btn btn-danger" style="margin-top: 10px;">Logout</a>
 
-                <a href="/wishlist"><i class="fas fa-heart"></i></a>
-                <a href="/cart"><i class="fas fa-shopping-cart"></i></a>
+               <!-- Wishlist -->
+<div class="icon-wrapper">
+  <a href="/wishlist"><i class="fas fa-heart"></i></a>
+  <% if (wishlistCount > 0) { %>
+    <span class="icon-badge"><%= wishlistCount %></span>
+  <% } %>
+</div>
+
+<!-- Cart -->
+<div class="icon-wrapper">
+  <a href="/cart"><i class="fas fa-shopping-cart"></i></a>
+  <% if (cartCount > 0) { %>
+    <span class="icon-badge"><%= cartCount %></span>
+  <% } %>
+</div>
+
+
                 <a style="text-decoration: none; color: black;" href="/userProfile">
                     <h5 style="font-family: 'Poppins', sans-serif;">
                         <%= user.name %>
