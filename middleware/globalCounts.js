@@ -1,5 +1,6 @@
 const Cart = require('../models/cartSchema');
 const User = require('../models/userSchema');
+const Wishlist=require('../models/wishlistSchema')
 
 module.exports = async (req, res, next) => {
   try {
