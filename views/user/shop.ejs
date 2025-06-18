@@ -524,7 +524,7 @@ body {
 .add-to-cart-btn {
   width: 140px;
   height: 40px;
-  background: linear-gradient(135deg, rgb(29, 165, 11), rgb(29, 165, 11));
+  background: linear-gradient(135deg, rgb(24, 132, 9), rgb(24, 140, 9));
   color: rgb(247, 244, 244);
   border: none;
   border-radius: 6px;
@@ -595,9 +595,9 @@ body {
 }
 
 .pagination .btn.active {
-  background-color: #333;
+  background-color: #0c88d6;
   color: white;
-  border-color: #333;
+  border-color: #1c0673;
 }
 
 /* Responsive Design */
@@ -745,7 +745,7 @@ body {
                 <span class="text-muted"><strike>₹<%= products[i].regularPrice.toLocaleString('en-IN') %></strike></span>
               </p>
             </a>
-            <button style="width: 140px; height: 50px;  color: rgb(247, 243, 243);" class="add-to-cart-btn" data-id="<%= products[i]._id %>">Add to Cart</button>
+            <button style="width: 140px; height: 70px;  color: rgb(247, 243, 243);" class="add-to-cart-btn" data-id="<%= products[i]._id %>">Add to Cart</button>
           </div>
         <% } %>
       </main>

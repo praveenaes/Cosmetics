@@ -4,17 +4,18 @@ const User = require('../models/userSchema');
 module.exports = async (req, res, next) => {
   try {
     if (req.session.user) {
-      console.log("User in session:", req.session.user);
-
       const userId = req.session.user;
-      const userData = await User.findById(userId).lean();
+
       const cart = await Cart.findOne({ userId }).lean();
+      const wishlist = await Wishlist.findOne({ userId }).lean();
 
       const cartProductIds = cart
         ? cart.items.map(item => item.productId.toString())
         : [];
 
-      const wishlistProductIds = userData.wishlist.map(id => id.toString());
+      const wishlistProductIds = wishlist
+        ? wishlist.products.map(item => item.productId.toString())
+        : [];
 
       const filteredWishlist = wishlistProductIds.filter(
         id => !cartProductIds.includes(id)
@@ -26,9 +27,6 @@ module.exports = async (req, res, next) => {
       res.locals.cartCount = 0;
       res.locals.wishlistCount = 0;
     }
-
-    console.log("cartCount:", res.locals.cartCount);
-    console.log("wishlistCount:", res.locals.wishlistCount);
 
     next();
   } catch (err) {

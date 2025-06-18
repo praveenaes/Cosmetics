@@ -69,6 +69,10 @@
                                           <% } else if (order.paymentMethod === 'wallet') { %>
                                               Wallet Payment
                                           <% } %>
+                                          <br>
+                                          <%if(order.status==='pending'){%>
+                                        <a href="/retryPayment?orderId=<%=order.razorpayOrderId%>"><button class="btn btn-outline-warning btn-sm fw-semibold text-uppercase" >Retry Payment</button></a> 
+                                         <%}%>
                                            </div>
                                         </div>
                                         <div class="col-md-3 text-end d-flex">
@@ -102,9 +106,7 @@
                                          <%if(order.orderedItems[i].productStatus === 'cancelled'){%>
                                          <span class="badge bg-danger text-white">PRODUCT CANCELLED</span>
                                          <%}%>
-                                         <%if(order.status==='pending'){%>
-                                        <a href="/retryPayment?orderId=<%=order.razorpayOrderId%>"><button class="btn btn-outline-warning btn-sm fw-semibold text-uppercase" >Retry Payment</button></a> 
-                                         <%}%>
+                                         
                                         </div>
                                     </div>
                                 </div>
